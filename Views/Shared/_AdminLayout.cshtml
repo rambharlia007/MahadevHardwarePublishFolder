@@ -1,0 +1,59 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/custom")
+
+
+    @RenderSection("scripts", required: false)
+    <style>
+        .header {
+            border-bottom: 2px solid #343a405e;
+        }
+
+        .nav-bg {
+            background-color: #1f6b8a;
+        }
+
+        h4 {
+            color: #1f6b8a;
+            font-weight: 500;
+            font-size: medium;
+        }
+        .form-control {
+            border-radius: 0 !important;
+        }
+
+        /*.header-container, .body-container, .footer-container {
+            max-width: 1280px;
+            margin: 0 auto;
+        }*/
+    </style>
+</head>
+
+<body style="background-color:#eee">
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top nav-bg">
+        <a class="navbar-brand" style="font-size:1.1rem; margin-left:10px;" )>@ViewBag.BusinessName</a>
+        <div style="color:#ffffffb8; padding-left:50%; font-size:0.9rem;"> Welcome: <strong>@ViewBag.UserName</strong></div>
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+                <a class="nav-link nav-link-profile" href=@Url.Action("Logout", "Account")>Logout</a>
+            </li>
+        </ul>
+    </nav>
+    <div class="body-content body-container">
+        @RenderBody()
+        <hr class="d-print-none" />
+        <footer class="d-print-none footer-container">
+            <p>&copy; @DateTime.Now.Year - Ram Bharlia</p>
+        </footer>
+    </div>
+</body>
+</html>

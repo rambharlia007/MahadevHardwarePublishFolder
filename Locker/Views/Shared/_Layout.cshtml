@@ -1,0 +1,64 @@
+﻿@model MahadevHWBillingApp.Models.Profile
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@Model.BusinessName</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/custom")
+   
+
+    @RenderSection("scripts", required: false)
+    <style>
+        .header {
+            background-color: #498fab;
+            border-bottom: 3px solid #343a405e;
+        }
+    </style>
+</head>
+
+<body style="background-color:#eee">
+    <nav class="navbar navbar-expand-lg navbar-dark header fixed-top">
+        <a class="navbar-brand" href=@Url.Action("New","Dashboard")>@Model.BusinessName</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarColor01">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link nav-link-bill" href=@Url.Action("New", "Billing")>New Bill</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link nav-link-item" href=@Url.Action("Index", "Item")>Products</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link nav-link-purchase" href=@Url.Action("List", "Purchase")>Purchase</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link nav-link-sale" href=@Url.Action("List", "Sale")>Sales</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link nav-link-dashboard" href=@Url.Action("New", "Dashboard")>Report</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link nav-link-profile" href=@Url.Action("New", "Profile")>Profile</a>
+                </li>
+            </ul>
+        </div>
+        <div style="color:#fff"> <span>Welcome:&nbsp;</span><strong class="user-name"> @Model.Owner</strong></div>
+    </nav>
+    <div class="body-content">
+        @RenderBody()
+        <hr class="d-print-none"/>
+        <footer class="d-print-none">
+            <p>&copy; @DateTime.Now.Year - Ram Bharlia</p>
+        </footer>
+    </div>
+</body>
+</html>

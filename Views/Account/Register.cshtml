@@ -1,0 +1,217 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<style>
+   
+</style>
+
+<div id="app">
+    <div class="row" style="background-color: #f6f7f8 !important;">
+        <div class="col-md-6">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb" style="padding-bottom: 0px; margin-bottom: 0px; background-color: #f6f7f8 !important;">
+                    <li class="breadcrumb-item"><i class="fa fa-home">&nbsp;</i><a href="#">Home</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Admin</li>
+                </ol>
+            </nav>
+            <h4 style="padding-left: 15px;">GST Accounts</h4>
+        </div>
+    </div>
+    <div v-cloak style="margin-top:20px;">
+        <div class="alert alert-success alert-dismissible fade show" role="alert" v-cloak v-show="alertMessage" style="margin-top: 20px;">
+            {{alertMessage}}
+            <button type="button" class="close" v-on:click="closeAlertMessage('alertMessage')" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+
+        <div v-cloak class="alert alert-danger alert-dismissible fade show" role="alert" v-show="alertFailureMessage" style="margin-top: 20px;">
+            {{alertFailureMessage}}
+            <button type="button" class="close" v-on:click="closeAlertMessage('alertFailureMessage')" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    </div>
+
+            <div class="row">
+                <div class="col-md-12 pb-3">
+                    <button type="button" class="btn btn-success btn-sm" v-on:click="openModalForRegisterUser()">Add New GST Account</button>
+                </div>
+                <div class="col-md-12 pt-3" style="background-color:white;">
+                    <table style="font-size: 0.85em; color: #6c757d !important;" class="table table-bordered table-sm">
+                        <tr>
+                            <th class="text-center">User Name</th>
+                            <th class="text-center">Password</th>
+                            <th class="text-center">Business Name</th>
+                            <th class="text-center">GSTIN</th>
+                            <th class="text-center">Enable stock count</th>
+                            <th class="text-center">Owner</th>
+                            <th class="text-center">Email</th>
+                            <th class="text-center">Mobile Number</th>
+                            <th class="text-center">Address</th>
+                        </tr>
+                        <tr v-for="(user,index) in users">
+                            <td class="text-center">{{user.Name}}</td>
+                            <td class="text-center">{{user.Password}}</td>
+                            <td class="text-center">{{user.BusinessName}}</td>
+                            <td class="text-center">{{user.GSTIN}}</td>
+                            <td class="text-center">{{user.EnableStockCount === true ? 'Yes' : 'No'}}</td>
+                            <td class="text-center">{{user.Owner}}</td>
+                            <td class="text-center">{{user.Email}}</td>
+                            <td class="text-center">{{user.MobileNumber}}</td>
+                            <td class="text-center">{{user.Address}}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+    <div class="modal" id="myModal">
+        <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="modal-title">Add New GST Account</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+
+                <!-- Modal body -->
+                <div class="modal-body" style="padding-left:75px;">
+                    <div class="form-group row">
+                        <label class="col-md-4">User Name</label>
+                        <div class="col-md-6">
+                            <input type="text" class="form-control form-control-sm" v-model="User.Name">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-md-4">Password</label>
+                        <div class="col-md-6">
+                            <input type="password" class="form-control form-control-sm" v-model="User.Password">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-md-4">Confirm Password</label>
+                        <div class="col-md-6">
+                            <input type="password" class="form-control form-control-sm" v-model="User.ConfirmPassword">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-md-4">Business Name</label>
+                        <div class="col-md-6">
+                            <input type="text" class="form-control" v-model="User.BusinessName">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-md-4">Owner</label>
+                        <div class="col-md-6">
+                            <input type="text" class="form-control" v-model="User.Owner">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-md-4">GSTIN</label>
+                        <div class="col-md-6">
+                            <input class="form-control" v-model="User.GSTIN">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-md-4">Mobile No.</label>
+                        <div class="col-md-6">
+                            <input type="number" class="form-control" v-model="User.MobileNumber">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-md-4">Email</label>
+                        <div class="col-md-6">
+                            <input type="email" class="form-control" v-model="User.Email">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-md-4">Address</label>
+                        <div class="col-md-6">
+                            <textarea class="form-control" v-model="User.Address"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="form-check offset-4" style="padding-left:35px;">
+                                <input type="checkbox" class="form-check-input" v-model="User.EnableStockCount">
+                                <label class="form-check-label">Enable stock count</label>
+                        </div>
+                    </div>
+                    
+                </div>
+
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success btn-sm" data-dismiss="modal" v-on:click="register()">Register</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+    $(document).ready(function () {
+        var obj = {
+            alertFailureMessage: "",
+            alertMessage: "",
+            User: {
+                Name: "",
+                Password: "",
+                ConfirmPassword: "",
+                BusinessName: "",
+                Owner: "",
+                GSTIN: "",
+                MobileNumber: "",
+                Email: "",
+                Address: "",
+                EnableStockCount: false
+            },
+            users: []
+        }
+        new Vue({
+            el: '#app',
+            data: obj,
+            methods: {
+                openModalForRegisterUser: function () {
+                    $("#myModal").modal({ backdrop: 'static', keyboard: false, show: true });
+                },
+                showLoginForm: function (value) {
+                    this.isLogin = value;
+                },
+                register: function (e) {
+                    var self = this;
+                    if (self.User.Password && self.User.Password !== self.User.ConfirmPassword) {
+                        self.alertFailureMessage = "Passoword not mactching";
+                        return;
+                    }
+
+                    var endPoint = "/Account/Register";
+                    $.post(endPoint,
+                        self.User,
+                        function (res) {
+                            self.alertMessage = res.Message;
+                            self.getUsers();
+                        }).fail(function (res) {
+                            self.alertFailureMessage = res.Message;
+                        });
+                },
+                closeAlertMessage: function (property) {
+                    // set alert message to empty
+                    this[property] = "";
+                },
+                getUsers: function () {
+                    var self = this;
+                    $.get("/Account/Users", function (res) {
+                        self.users = res;
+                    })
+                }
+            },
+            mounted() {
+                this.getUsers();
+            }
+        });
+    });
+</script>

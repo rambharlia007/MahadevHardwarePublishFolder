@@ -1,0 +1,135 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_LoginLayout.cshtml";
+}
+<style>
+
+  input[type=text], input[type=password] {
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
+
+/* Set a style for all buttons */
+.login-button {
+  background-color: #4CAF50;
+  color: white;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+}
+
+/* Add a hover effect for buttons */
+button:hover {
+  opacity: 0.8;
+}
+
+
+/* Add padding to containers */
+.container {
+  padding: 16px;
+}
+
+/* The "Forgot password" text */
+span.psw {
+  float: right;
+  padding-top: 16px;
+}
+
+/* Change styles for span and cancel button on extra small screens */
+@@media screen and (max-width: 300px) {
+  span.psw {
+    display: block;
+    float: none;
+  }
+  .cancelbtn {
+    width: 100%;
+  }
+}
+
+</style>
+
+<div id="logreg-forms">
+
+    <div style="margin-top:20px;">
+        <div class="alert alert-success alert-dismissible fade show" role="alert" v-cloak v-show="alertMessage" style="margin-top: 20px;">
+            {{alertMessage}}
+            <button type="button" class="close" v-on:click="closeAlertMessage('alertMessage')" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+
+        <div v-cloak class="alert alert-danger alert-dismissible fade show" role="alert" v-show="alertFailureMessage" style="margin-top: 20px;">
+            {{alertFailureMessage}}
+            <button type="button" class="close" v-on:click="closeAlertMessage('alertFailureMessage')" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+            <div class="card">
+                <div class="card-body">
+                    <div class="container">
+                        <h4 class="mb-4" style="font-weight:500; font-size:1.3rem; text-align:center">@ViewBag.BusinessName</h4>
+                        <label class="mb-0"><b style="font-weight:400">Account Name</b></label>
+                        <input class="mt-0" style="height:35px;" type="text" required v-model="User.Name">
+
+                        <label class="mb-0"><b style="font-weight:400">Password</b></label>
+                        <input type="password" style="height:35px;" class="mt-0" required v-model="User.Password">
+
+                        <button class="login-button" type="submit" v-on:click="login()">Login</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+        <script>
+            $(document).ready(function () {
+                var obj = {
+                    isLogin: true,
+                    alertFailureMessage: "",
+                    alertMessage: "",
+                    User: {
+                        Name: "",
+                        Password: "",
+                    }
+                }
+                new Vue({
+                    el: '#logreg-forms',
+                    data: obj,
+                    methods: {
+                        showLoginForm: function (value) {
+                            this.isLogin = value;
+                        },
+                        login: function (e) {
+                            var self = this;
+                            var endPoint = "/Account/Login";
+                            $.post(endPoint,
+                                self.User,
+                                function (res) {
+                                    if (res.Status === "Success")
+                                        window.location.href = res.Link;
+                                    else
+                                        self.alertFailureMessage = res.Message;
+                                }).fail(function (res) {
+                                    self.alertFailureMessage = res;
+                                });
+                        },
+                        closeAlertMessage: function (property) {
+                            // set alert message to empty
+                            this[property] = "";
+                        },
+                    }
+                });
+            });
+        </script>

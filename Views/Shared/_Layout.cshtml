@@ -1,0 +1,140 @@
+﻿@model MahadevHWBillingApp.Models.Profile
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@Model.BusinessName</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/custom")
+
+
+    @RenderSection("scripts", required: false)
+    <style>
+        .header {
+            border-bottom: 2px solid #343a405e;
+        }
+
+        .nav-bg {
+            background-color: #1f6b8a;
+        }
+
+       .form-control{
+           border-radius:0 !important;
+       }
+
+        td {
+            padding: 4px !important;
+            font-weight: 500;
+            font: 90%/1.45em "Helvetica Neue", HelveticaNeue, Helvetica, Arial, sans-serif !important;
+            font-style: normal !important;
+            font-variant-ligatures: normal !important;
+            font-variant-caps: normal !important;
+            font-variant-numeric: normal !important;
+            font-variant-east-asian: normal !important;
+            /*font-weight: normal !important;*/
+            font-stretch: normal !important;
+            font-size: 90% !important;
+            line-height: 1.45em !important;
+            font-family: "Helvetica Neue", HelveticaNeue, Helvetica, Arial, sans-serif !important;
+        }
+        button 
+        {
+            padding: .25rem .5rem;
+            font-size: .875rem;
+            line-height: 1.5;
+            border-radius: .2rem;
+        }
+        h4 {
+            color: #1f6b8a;
+            font-weight: 500;
+            font-size: medium;
+        }
+
+        .card-header {
+            color: #1f6b8a;
+            font-weight: 500;
+            font-size: medium;
+            text-align:center;
+        }
+
+        .grid-summary {
+            color: #1f6b8a;
+            font-weight: 500;
+            font-size: medium;
+            position: relative;
+            left: 200px;
+            text-align: center;
+        }
+        /*.header-container, .body-container, .footer-container {
+            max-width: 1280px;
+            margin: 0 auto;
+        }*/
+    </style>
+</head>
+
+<body style="background-color:#eee">
+
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top nav-bg header-container" style="height:30px;">
+        <a class="navbar-brand nav-link-dashboard" style="font-size:1.1rem; margin-left:10px;" href=@Url.Action("New","Dashboard")>@Model.BusinessName</a>
+        <div style="color:#ffffffb8; padding-left:30%; font-size:0.9rem;"> <strong>GSTIN:&nbsp;@Model.GSTIN &nbsp; &nbsp; Name: <strong class="user-name">@Model.Owner</strong> &nbsp; &nbsp;User:Tax Payer</strong></div>
+    </nav>
+
+    <nav class="navbar navbar-expand-lg navbar-dark header fixed-top nav-bg header-container" style="height:30px; margin-top:30px; font-size:0.95rem;">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarColor01">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link nav-link-bill" href=@Url.Action("New", "Billing")>Generate Invoice</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link nav-link-item" href=@Url.Action("index", "Item")>Add Product</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link nav-link-sale" href=@Url.Action("List", "Sale")>Sales</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link nav-link-purchase" href=@Url.Action("List", "Purchase")>Purchase</a>
+                </li>
+            </ul>
+            <ul class="navbar-nav mx-auto">
+                <li class="nav-item">
+                    <a class="nav-link nav-link-record-payment" href=@Url.Action("RecordPayment", "Sale")>Record Payment</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link nav-link-estimate" href=@Url.Action("New", "Estimate")>Estimates</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link nav-link-dashboard" href=@Url.Action("New", "Dashboard")>Report</a>
+                </li>
+            </ul>
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link nav-link-contact" href=@Url.Action("List", "Contact")>Contacts</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link nav-link-profile" href=@Url.Action("New", "Profile")>Profile</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link nav-link-logout" href=@Url.Action("Logout", "Account")>Logout</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="body-content body-container">
+        @RenderBody()
+        <hr class="d-print-none" />
+        <footer class="d-print-none footer-container">
+            <p>&copy; @DateTime.Now.Year - Ram Bharlia</p>
+        </footer>
+    </div>
+</body>
+</html>
