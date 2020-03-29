@@ -177,7 +177,7 @@
                                     <td style="width:150px !important"> <input type="text" v-model="contact.Name" class="form-control form-control-sm"></td>
                                     <td>
                                         <select class="form-control form-control-sm" v-model="contact.Type">
-                                            <option value="customer">customer</option>
+                                            <option value="customer">Customer</option>
                                             <option value="vendor">Vendor</option>
                                         </select>
                                     </td>
@@ -260,7 +260,7 @@
                             success: function() {
                                 self.alertMessage =
                                     `${validData.length} contact Added succesfully.`;
-                                self.newItems = addEmptyNewCustomers();
+                                self.newCustomers = addEmptyNewCustomers();
                                 self.tableRef.ajax.reload(self.bindTableClickEvents);
                             }
                         });

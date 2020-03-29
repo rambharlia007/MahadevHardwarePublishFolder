@@ -104,6 +104,7 @@
     }
 </style>
 
+
 <div id="app" v-cloak>
     <div class="row d-print-none" style="background-color: #f6f7f8 !important;">
         <div class="col-md-8">
@@ -164,14 +165,14 @@
                                 <select v-bind:id="'product-sel-'+index" :data-id="index" class="product-select-2 js-example-basic-single js-states form-control"></select>
                             </td>
                             <td> <input type="text" readonly v-model="item.HSN" class="form-control form-control-sm"></td>
-                            <td> <input type="text" v-model="item.Price" v-on:keyup="calculatePerItemAmount(index)" class="form-control form-control-sm"></td>
-                            <td> <input type="text" v-model="item.Quantity" v-on:keyup="calculatePerItemAmount(index)" class="form-control form-control-sm"></td>
-                            <td> <input type="text" v-model="item.Discount" v-on:keyup="calculatePerItemAmount(index)" class="form-control form-control-sm"></td>
-                            <td> <input type="text" v-model="item.GST" v-on:keyup="calculatePerItemAmount(index)" class="form-control form-control-sm"></td>
-                            <td> <input type="text" readonly v-model="item.TotalCGSTAmount" class="form-control form-control-sm"></td>
-                            <td> <input type="text" readonly v-model="item.TotalSGSTAmount" class="form-control form-control-sm"></td>
+                            <td> <input type="number" v-model="item.Price" v-on:keyup="calculatePerItemAmount(index)" class="form-control form-control-sm"></td>
+                            <td> <input type="number" v-model="item.Quantity" v-on:keyup="calculatePerItemAmount(index)" class="form-control form-control-sm"></td>
+                            <td> <input type="number" v-model="item.Discount" v-on:keyup="calculatePerItemAmount(index)" class="form-control form-control-sm"></td>
+                            <td> <input type="number" v-model="item.GST" v-on:keyup="calculatePerItemAmount(index)" class="form-control form-control-sm"></td>
+                            <td> <input type="number" readonly v-model="item.TotalCGSTAmount" class="form-control form-control-sm"></td>
+                            <td> <input type="number" readonly v-model="item.TotalSGSTAmount" class="form-control form-control-sm"></td>
                             @*<td> <input type="text" readonly v-model="item.TotalDiscount" class="form-control form-control-sm"></td>*@
-                            <td> <input type="text" readonly v-model="item.TotalAmount" class="form-control form-control-sm"></td>
+                            <td> <input type="number" readonly v-model="item.TotalAmount" class="form-control form-control-sm"></td>
                         </tr>
                     </tbody>
                 </table>
@@ -207,11 +208,11 @@
                             </tr>
                             <tr>
                                 <th>GSTIN:</th>
-                                <td><input type="text" v-model="CustomerGSTIN" class="form-control form-control-sm"></td>
+                                <td><input type="text" customValidation="gstin" v-model="CustomerGSTIN" class="form-control form-control-sm"></td>
                             </tr>
                             <tr>
                                 <th>Phone Number:</th>
-                                <td><input type="text" v-model="CustomerMobileNumber" class="form-control form-control-sm"></td>
+                                <td><input type="text" customValidation="phone" v-model="CustomerMobileNumber" class="form-control form-control-sm"></td>
                             </tr>
                             <tr>
                                 <th>Address:</th>
@@ -955,5 +956,5 @@
         });
     });
 </script>
-
+<script src="~/Scripts/customValidation.js"></script>
 

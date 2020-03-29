@@ -11,7 +11,7 @@
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
     @Scripts.Render("~/bundles/custom")
-
+    <script src="~/Scripts/keyEvent.js"></script>
 
     @RenderSection("scripts", required: false)
     <style>
@@ -42,7 +42,7 @@
             line-height: 1.45em !important;
             font-family: "Helvetica Neue", HelveticaNeue, Helvetica, Arial, sans-serif !important;
         }
-        button 
+        button
         {
             padding: .25rem .5rem;
             font-size: .875rem;
@@ -70,10 +70,49 @@
             left: 200px;
             text-align: center;
         }
+
+        [v-cloak] {
+            display: none;
+        }
+        input {
+            padding-left: 10px !important
+        }
+
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        ::-webkit-scrollbar-track {
+            -webkit-box-shadow: inset 0 0 6px #6c757d;
+            -webkit-border-radius: 10px;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            -webkit-border-radius: 10px;
+            border-radius: 10px;
+            background: #eee;
+            -webkit-box-shadow: inset 0 0 6px #6c757d;
+        }
+
+        ::-webkit-scrollbar-thumb:window-inactive {
+            background: #6c757d;
+        }
+
+        .custom-alert{
+            color:red;
+        }
+
+        .scroll {
+        display: block;
+        height: 300PX;
+        overflow-y: scroll;
+    }
         /*.header-container, .body-container, .footer-container {
             max-width: 1280px;
             margin: 0 auto;
         }*/
+       
     </style>
 </head>
 
@@ -117,6 +156,9 @@
             </ul>
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item">
+                    <a class="nav-link nav-link-shortcut" href=@Url.Action("List", "Keyboard")>Keyboard Shortcut</a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link nav-link-contact" href=@Url.Action("List", "Contact")>Contacts</a>
                 </li>
                 <li class="nav-item">
@@ -131,9 +173,10 @@
 
     <div class="body-content body-container">
         @RenderBody()
+        @Scripts.Render("~/bundles/validation")
         <hr class="d-print-none" />
         <footer class="d-print-none footer-container">
-            <p>&copy; @DateTime.Now.Year - Ram Bharlia</p>
+            <p>&copy; @DateTime.Now.Year - Product by Ram Bharlia</p>
         </footer>
     </div>
 </body>

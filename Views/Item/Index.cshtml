@@ -31,7 +31,7 @@
     @@media only screen and (min-width: 768px) {
         .table-body {
             display: block;
-            height: 250PX;
+            max-height: 250PX;
             overflow-y: scroll;
         }
     }
@@ -39,7 +39,7 @@
     @@media only screen and (min-width: 992px) {
         .table-body {
             display: block;
-            height: 200px;
+            max-height: 200px;
             overflow-y: scroll;
         }
     }
@@ -120,70 +120,71 @@
                     </div>
 
                     <!-- Modal body -->
-                    <div class="modal-body">
+                    <div class="modal-body scroll" style="padding-left:50px;">
                         <form>
                             <div class="form-group row">
-                                <label class="col-sm-2 col-form-label">Name</label>
-                                <div class="col-sm-10">
+                                <label class="col-md-3 col-form-label">Name</label>
+                                <div class="col-sm-6">
                                     <input v-model="item.Name" type="text" class="form-control">
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <label class="col-sm-2 col-form-label">HSN/SAC</label>
-                                <div class="col-sm-10">
+                                <label class="col-md-3 col-form-label">HSN/SAC</label>
+                                <div class="col-sm-6">
                                     <input v-model="item.HSN" type="text" class="form-control">
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <label class="col-sm-2 col-form-label">PER</label>
-                                <div class="col-sm-10">
+                                <label class="col-md-3 col-form-label">PER</label>
+                                <div class="col-sm-6">
                                     <select class="form-control" v-model="item.MeasuringUnit">
                                         <option value="Unit">Unit</option>
+                                        <option value="Number">Number</option>
                                         <option value="Bag">Bag</option>
                                         <option value="Box">Box</option>
                                     </select>
                                 </div>
                             </div>
-                            <div class="form-group row">
-                                <label class="col-sm-2 col-form-label">Quantity Available</label>
-                                <div class="col-sm-10">
-                                    <input readonly v-model="item.Quantity" type="text" class="form-control">
+                            <div class="form-group row" v-if="isStockCountEnabled">
+                                <label class="col-md-3 col-form-label">Quantity Available</label>
+                                <div class="col-sm-6">
+                                    <input type="number" readonly v-model="item.Quantity" class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-group row" v-if="isStockCountEnabled">
+                                <label class="col-md-3 col-form-label">Add Quantity</label>
+                                <div class="col-sm-6">
+                                    <input v-model="item.QuantityAdded" type="number" class="form-control">
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <label class="col-sm-2 col-form-label">Add Quantity</label>
-                                <div class="col-sm-10">
-                                    <input v-model="item.QuantityAdded" type="text" class="form-control">
+                                <label class="col-md-3 col-form-label">CGST</label>
+                                <div class="col-sm-6">
+                                    <input v-model="item.CGST" type="number" class="form-control">
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <label class="col-sm-2 col-form-label">CGST</label>
-                                <div class="col-sm-10">
-                                    <input v-model="item.CGST" type="text" class="form-control">
+                                <label class="col-md-3 col-form-label">SGST</label>
+                                <div class="col-sm-6">
+                                    <input v-model="item.SGST" type="number" class="form-control">
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <label class="col-sm-2 col-form-label">SGST</label>
-                                <div class="col-sm-10">
-                                    <input v-model="item.SGST" type="text" class="form-control">
+                                <label class="col-md-3 col-form-label">Discount %</label>
+                                <div class="col-sm-6">
+                                    <input v-model="item.Discount" v-on:keyup="calculateEditItemDiscount()" type="number" class="form-control">
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <label class="col-sm-2 col-form-label">Discount %</label>
-                                <div class="col-sm-10">
-                                    <input v-model="item.Discount" v-on:keyup="calculateEditItemDiscount()" type="text" class="form-control">
+                                <label class="col-md-3 col-form-label">List Price</label>
+                                <div class="col-sm-6">
+                                    <input v-model="item.Price" v-on:keyup="calculateEditItemDiscount()" type="number" class="form-control">
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <label class="col-sm-2 col-form-label">List Price</label>
-                                <div class="col-sm-10">
-                                    <input v-model="item.Price" v-on:keyup="calculateEditItemDiscount()" type="text" class="form-control">
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label class="col-sm-2 col-form-label">Discount Price</label>
-                                <div class="col-sm-10">
-                                    <input readonly v-model="item.DiscountPrice" type="text" class="form-control">
+                                <label class="col-md-3 col-form-label">Discount Price</label>
+                                <div class="col-sm-6">
+                                    <input readonly v-model="item.DiscountPrice" type="number" class="form-control">
                                 </div>
                             </div>
                         </form>
@@ -210,14 +211,14 @@
                     <!-- Modal body -->
                     <div class="modal-body">
 
-                        <table class="table text-secondary" style="font-size: 14px;">
+                        <table class="table text-secondary" id="add-product-table" style="font-size: 14px; margin-bottom:5px;">
                             <thead class="thead-light table-head">
                                 <tr class="table-row">
                                     <th style="width: 45px" scope="col">#</th>
                                     <th style="width:150px !important" scope="col">Name</th>
                                     <th scope="col">HSN/SAC</th>
                                     <th scope="col">PER</th>
-                                    <th scope="col">Quantity Available</th>
+                                    <th scope="col" v-if="isStockCountEnabled">Quantity Available</th>
                                     <th scope="col">SGST (%)</th>
                                     <th scope="col">CGST (%)</th>
                                     <th scope="col">Discount %</th>
@@ -228,29 +229,31 @@
                             <tbody class="table-body">
                                 <tr class="table-row" v-for="(item,index) in newItems">
                                     <td style="width: 45px">{{index+1}}</td>
-                                    <td style="width:150px !important"> <input type="text" v-model="item.Name" class="form-control form-control-sm"></td>
-                                    <td> <input type="text" v-model="item.HSN" class="form-control form-control-sm"></td>
+                                    <td style="width:150px !important"> <input type="text" cv="required" v-model="item.Name" class="form-control form-control-sm"></td>
+                                    <td> <input type="text" cv="required" v-model="item.HSN" class="form-control form-control-sm"></td>
                                     <td>
                                         <select class="form-control form-control-sm" v-model="item.MeasuringUnit">
+                                            <option value="Number">Number</option>
                                             <option value="Unit">Unit</option>
                                             <option value="Bag">Bag</option>
                                             <option value="Box">Box</option>
                                         </select>
                                     </td>
-                                    <td> <input type="number" v-model="item.Quantity" class="form-control form-control-sm"></td>
-                                    <td> <input type="number" v-model="item.SGST" class="form-control form-control-sm"></td>
-                                    <td> <input type="number" v-model="item.CGST" class="form-control form-control-sm"></td>
+                                    <td v-if="isStockCountEnabled"> <input type="number" cv="required" v-model="item.Quantity" class="form-control form-control-sm"></td>
+                                    <td> <input type="number" v-model="item.SGST" cv="required" class="form-control form-control-sm"></td>
+                                    <td> <input type="number" v-model="item.CGST" cv="required" class="form-control form-control-sm"></td>
                                     <td> <input type="number" step=".01" v-model="item.Discount" v-on:keyup="calculatePerItemDiscount(index)" class="form-control form-control-sm"></td>
-                                    <td> <input type="number" v-model="item.Price" v-on:keyup="calculatePerItemDiscount(index)" class="form-control form-control-sm"></td>
+                                    <td> <input type="number" v-model="item.Price" cv="required" v-on:keyup="calculatePerItemDiscount(index)" class="form-control form-control-sm"></td>
                                     <td> <input type="number" readonly v-model="item.DiscountPrice" class="form-control form-control-sm"></td>
                                 </tr>
                             </tbody>
                         </table>
+                        <button type="button" class="btn btn-success btn-sm" style="margin-left:45px;" v-on:click="addEmptyProduct()">Add New</button>
                     </div>
 
                     <!-- Modal footer -->
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-success" data-dismiss="modal" v-on:click="saveNewProduct()">Submit</button>
+                        <button type="button" class="btn btn-success btn-sm" v-on:click="saveNewProduct()">Save</button>
                     </div>
                 </div>
             </div>
@@ -264,7 +267,7 @@
 
         function addEmptyNewItems() {
             var result = [];
-            for (var i = 0; i < 20; i++) {
+            for (var i = 0; i < 1; i++) {
                 result.push({
                     Name: "",
                     Price: "",
@@ -272,7 +275,7 @@
                     SGST: "",
                     Discount: "",
                     Quantity: "",
-                    MeasuringUnit: "",
+                    MeasuringUnit: "Number",
                     DiscountPrice: "",
                     HSN: ""
                 });
@@ -286,13 +289,21 @@
             alertFailureMessage: "",
             alertMessage: "",
             newItems: addEmptyNewItems(),
-            tableRef: null
+            tableRef: null,
+            isStockCountEnabled: false
         }
 
         new Vue({
             el: '#app',
             data: obj,
             methods: {
+                addEmptyProduct: function () {
+                    this.newItems.push(addEmptyNewItems()[0]);
+                    var height = 50 * this.newItems.length;
+                    setTimeout(function () {
+                        $(".table-body").scrollTop(height)
+                    },300)
+                },
                 calculatePerItemDiscount: function(index) {
                     var currentItem = this.newItems[index];
                     this.calculateDiscount(currentItem);
@@ -323,33 +334,25 @@
                 openModalForAddProduct: function() {
                     $("#add-product").modal("show");
                 },
-                saveNewProduct: function() {
-                    var self = this;
-                    var validData = [];
-                    self.newItems.forEach(function(data) {
-                        if (data.Name && data.Price && data.CGST && data.SGST && data.Quantity && data.MeasuringUnit)
-                            validData.push(data);
-                    });
-
-                    if (validData.length) {
+                saveNewProduct: function () {
+                    validation[0].register();
+                    var isValid = validation[0].isTableDataValid("add-product-table");
+                    if (isValid === 0) {
+                        var self = this;
                         $.ajax({
                             type: 'POST',
                             url: '@Url.Action("AddItems", "Item")',
-                            data: JSON.stringify(validData),
+                            data: JSON.stringify(self.newItems),
                             dataType: 'json',
                             contentType: 'application/json; charset=utf-8',
-                            success: function() {
-                                self.alertMessage =
-                                    `${validData.length} Product Added succesfully. ${30 - validData.length
-                                    } Product were left empty`;
+                            success: function () {
+                                $("#add-product").modal("hide");
+                                self.alertMessage = "Product Added succesfully.";
                                 self.newItems = addEmptyNewItems();
                                 self.tableRef.ajax.reload(self.bindTableClickEvents);
                             }
                         });
-                    } else {
-                        self.alertFailureMessage = "30 off 30 invalid Product record were found";
                     }
-
                 },
                 saveEditItem: function() {
                     var self = this;
@@ -378,10 +381,9 @@
                     });
                 },
                 hideStockCountColumns: function () {
-                    var stockCount = '@Model.EnableStockCount';
-                    if (stockCount === 'True')
-                        return;
                     var self = this;
+                    if (self.isStockCountEnabled)
+                        return;
                     self.tableRef.column(3).visible(false);
                     self.tableRef.column(4).visible(false);
                 },
@@ -462,6 +464,7 @@
             mounted() {
                 var self = this;
                 $(".nav-link-item").addClass("active");
+                self.isStockCountEnabled = '@Model.EnableStockCount' === 'True';
                 $('#product-table').on('draw.dt',
                     function () {
                         self.bindTableClickEvents();
@@ -471,3 +474,4 @@
         });
     });
 </script>
+<script src="~/Scripts/customValidation.js"></script>
