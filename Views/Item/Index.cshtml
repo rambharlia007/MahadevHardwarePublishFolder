@@ -139,9 +139,10 @@
                                 <div class="col-sm-6">
                                     <select class="form-control" v-model="item.MeasuringUnit">
                                         <option value="Unit">Unit</option>
-                                        <option value="Number">Number</option>
+                                        <option value="NOS">NOS</option>
                                         <option value="Bag">Bag</option>
                                         <option value="Box">Box</option>
+                                        <option value="KGS">KGS</option>
                                     </select>
                                 </div>
                             </div>
@@ -233,10 +234,11 @@
                                     <td> <input type="text" v-model="item.HSN" class="form-control form-control-sm"></td>
                                     <td>
                                         <select class="form-control form-control-sm" v-model="item.MeasuringUnit">
-                                            <option value="Number">Number</option>
+                                            <option value="NOS">NOS</option>
                                             <option value="Unit">Unit</option>
                                             <option value="Bag">Bag</option>
                                             <option value="Box">Box</option>
+                                            <option value="KGS">KGS</option>
                                         </select>
                                     </td>
                                     <td v-if="isStockCountEnabled"> <input type="number" cv="required" v-model="item.Quantity" class="form-control form-control-sm"></td>
@@ -275,7 +277,7 @@
                     SGST: "",
                     Discount: "",
                     Quantity: "",
-                    MeasuringUnit: "Number",
+                    MeasuringUnit: "NOS",
                     DiscountPrice: "",
                     HSN: ""
                 });
@@ -314,10 +316,11 @@
                     var cp = parseFloat(currentItem.Price);
                     var price = cp + ((tax / 100) * cp);
                     if (currentItem.Discount) {
-                        currentItem.DiscountPrice =
+                        tempPrice =
                             price - ((currentItem.Discount / 100) * price);
+                        currentItem.DiscountPrice = self.roundOffTwoPlace(tempPrice);
                     } else {
-                        currentItem.DiscountPrice = currentItem.Price;
+                        currentItem.DiscountPrice = self.roundOffTwoPlace(price);
                     }
                 },
                 calculateEditItemDiscount: function () {
@@ -342,6 +345,9 @@
                     self.newItems = addEmptyNewItems();
                     validation[0].removeErrorMessage();
                     $(id).modal("hide");
+                },
+                roundOffTwoPlace: function (number) {
+                    return 0 || Math.round(number * 100) / 100
                 },
                 saveNewProduct: function () {
                     validation[0].register();
