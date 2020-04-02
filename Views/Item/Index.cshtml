@@ -131,7 +131,7 @@
                             <div class="form-group row">
                                 <label class="col-md-3 col-form-label">HSN/SAC</label>
                                 <div class="col-sm-6">
-                                    <input v-model="item.HSN" cv="required" type="text" class="form-control">
+                                    <input v-model="item.HSN" type="text" class="form-control">
                                 </div>
                             </div>
                             <div class="form-group row">
@@ -172,7 +172,7 @@
                             <div class="form-group row">
                                 <label class="col-md-3 col-form-label">Discount %</label>
                                 <div class="col-sm-6">
-                                    <input v-model="item.Discount"  v-on:keyup="calculateEditItemDiscount()" type="number" class="form-control">
+                                    <input v-model="item.Discount" v-on:keyup="calculateEditItemDiscount()" type="number" class="form-control">
                                 </div>
                             </div>
                             <div class="form-group row">
@@ -230,7 +230,7 @@
                                 <tr class="table-row" v-for="(item,index) in newItems">
                                     <td style="width: 45px">{{index+1}}</td>
                                     <td style="width:150px !important"> <input type="text" cv="required" v-model="item.Name" class="form-control form-control-sm"></td>
-                                    <td> <input type="text" cv="required" v-model="item.HSN" class="form-control form-control-sm"></td>
+                                    <td> <input type="text" v-model="item.HSN" class="form-control form-control-sm"></td>
                                     <td>
                                         <select class="form-control form-control-sm" v-model="item.MeasuringUnit">
                                             <option value="Number">Number</option>
@@ -310,10 +310,12 @@
                     this.calculateDiscount(currentItem);
                 },
                 calculateDiscount: function (currentItem) {
+                    var tax = currentItem.CGST + currentItem.SGST;
+                    var cp = parseFloat(currentItem.Price);
+                    var price = cp + ((tax / 100) * cp);
                     if (currentItem.Discount) {
-
                         currentItem.DiscountPrice =
-                            currentItem.Price - ((currentItem.Discount / 100) * currentItem.Price);
+                            price - ((currentItem.Discount / 100) * price);
                     } else {
                         currentItem.DiscountPrice = currentItem.Price;
                     }
@@ -370,6 +372,7 @@
                             $.post("/item/EditItem",
                                 self.item,
                                 function (data) {
+                                    self.closeModal("#myModal");
                                     self.alertMessage = "Item Edited succesfully";
                                     self.tableRef.ajax.reload(self.bindTableClickEvents);
                                 }).fail(function () {
