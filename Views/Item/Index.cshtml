@@ -243,7 +243,7 @@
                                     </td>
                                     <td v-if="isStockCountEnabled"> <input type="number" cv="required" v-model="item.Quantity" class="form-control form-control-sm"></td>
                                     <td> <input type="number" v-model="item.SGST" cv="required" class="form-control form-control-sm"></td>
-                                    <td> <input type="number" v-model="item.CGST" cv="required" class="form-control form-control-sm"></td>
+                                    <td> <input type="number" v-model="item.CGST" cv="required" v-on:keyup="copyTax(index)" class="form-control form-control-sm"></td>
                                     <td> <input type="number" step=".01" v-model="item.Discount" v-on:keyup="calculatePerItemDiscount(index)" class="form-control form-control-sm"></td>
                                     <td> <input type="number" v-model="item.Price" cv="required" v-on:keyup="calculatePerItemDiscount(index)" class="form-control form-control-sm"></td>
                                     <td> <input type="number" readonly v-model="item.DiscountPrice" class="form-control form-control-sm"></td>
@@ -307,13 +307,16 @@
                         validation[0].register();
                     },300)
                 },
+                copyTax: function (index) {
+                    this.newItems[index].CGST = this.newItems[index].SGST;
+                },
                 calculatePerItemDiscount: function(index) {
                     var currentItem = this.newItems[index];
                     this.calculateDiscount(currentItem);
                 },
                 calculateDiscount: function (currentItem) {
                     var self = this;
-                    var tax = currentItem.CGST + currentItem.SGST;
+                    var tax = parseInt(currentItem.CGST) + parseInt(currentItem.SGST); 
                     var cp = parseFloat(currentItem.Price);
                     var price = cp + ((tax / 100) * cp);
                     if (currentItem.Discount) {
