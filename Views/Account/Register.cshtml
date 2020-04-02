@@ -198,7 +198,7 @@
                 },
                 register: function (e) {
                     var self = this;
-                    var validate = isFormDataValid();
+                    var validate = validation[0].isFormDataValid();
                     if (validate < 1) {
                         var endPoint = "/Account/Register";
                         $.post(endPoint,
@@ -226,6 +226,7 @@
             mounted() {
                 this.getUsers();
                 $('[data-toggle="tooltip"]').tooltip();
+                validation[0].register();
             }
         });
     });

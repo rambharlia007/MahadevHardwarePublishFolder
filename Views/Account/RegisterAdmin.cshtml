@@ -107,7 +107,7 @@
                 },
                 register: function (e) {
                     var self = this;
-                    var isFormValid = isFormDataValid();
+                    var isFormValid = validation[0].isFormDataValid();
                     if (isFormValid == 0) {
                         var endPoint = "/Account/RegisterAdmin";
 
@@ -127,6 +127,9 @@
                     // set alert message to empty
                     this[property] = "";
                 },
+            },
+            mounted() {
+                validation[0].register();
             }
         });
     });
