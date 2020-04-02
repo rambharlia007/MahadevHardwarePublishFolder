@@ -10,23 +10,82 @@
         isFormDataValid: function () {
             var x;
             $("form").each(function () {
-                x = $(this).find(':input');
+                x = $(this).find(':input.form-control');
             });
             for (i = 0; i < x.length; i++) {
                 var ele = $(x[i]);
                 ele.focusout();
             }
-            return $(".custom-alert").length;
+            return $("form .custom-alert").length;
         },
         isTableDataValid: function (id) {
-            var x = $("#" + id).find(":input");
+            var x = $("#" + id).find(":input.form-control");
             for (i = 0; i < x.length; i++) {
                 var ele = $(x[i]);
                 ele.focusout();
             }
-            return $(".custom-alert").length;
+            return $("table .custom-alert").length;
+        },
+        removeErrorMessage: function () {
+            $(".custom-alert").remove();
+        },
+        alertCollapseCardError: function (id) {
+            var ele = $(id + " .card");
+            for (i = 0; i < ele.length; i++) {
+                if ($(ele[i]).find(".collapse").length > 0 && $(ele[i]).find(".custom-alert").length > 0) {
+                    $(ele[i]).addClass("card-alert");
+                    $(ele[i]).find(".card-header").addClass("card-alert-header");
+                }
+                else {
+                    $(ele[i]).removeClass("card-alert");
+                    $(ele[i]).find(".card-header").removeClass("card-alert-header");
+                }
+            }
+        },
+        collapse: function () {
+            var ele = $(".table-body .card-body");
+            for (i = 0; i < ele.length - 1; i++) {
+                $(ele[i]).addClass("collapse");
+            }
+        },
+        removeCardCollapse: function () {
+            $(".card .card-body").removeClass("collapse");
+        },
+        cardToggle: function (index) {
+            var ele = $(".table-body .card");
+            var collEle = $(ele[index]);
+            var cardBodyEle = collEle.find(".card-body");
+            if (collEle.find(".collapse").length === 0) {
+                cardBodyEle.addClass("collapse");
+                if (collEle.find(".custom-alert").length > 0) {
+                    collEle.addClass("card-alert");
+                    collEle.find(".card-header").addClass("card-alert-header");
+                }
+            } else {
+                collEle.removeClass("card-alert");
+                collEle.find(".card-header").removeClass("card-alert-header");
+                cardBodyEle.removeClass("collapse");
+            }
         },
         register: function () {
+
+            //is only for date picker
+            //$(':input[cv="date"]').focusout(function (e) {
+            //    var currEle = $(e.target).parent();
+            //    var inpEle = currEle.find(":input");
+            //    currEle.next("span .custom-alert").remove();
+            //    for (i = 1; i < inpEle.length; i++) {
+            //        var value = $(inpEle).val();
+            //        var isNotValid = isNaN(parseInt(value));
+            //        if (isNotValid) {
+            //            currEle.next("span").remove();
+            //            currEle.after("<span class='custom-alert'>Field is required</span>");
+            //        }
+            //        else {
+            //            currEle.next("span").remove();
+            //        }
+            //    }
+            //});
             $(':input[type="number"]').keypress(function (e) {
                 var inputKeyCode = e.keyCode ? e.keyCode : e.which;
                 if (inputKeyCode !== null) {

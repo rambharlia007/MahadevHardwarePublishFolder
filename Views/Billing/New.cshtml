@@ -15,22 +15,27 @@
     .table-sm td, .table-sm th {
         padding: 0.15rem !important;
     }
+
     .pointer {
         cursor: pointer;
     }
-    
+
     .border-right {
         border-right: 1px solid #eee !important;
     }
+
     .border-top {
         border-top: 1px solid #eee !important;
     }
+
     .border-bottom {
         border-bottom: 1px solid #eee !important;
     }
+
     .border-left {
         border-left: 1px solid #eee !important;
     }
+
     .hide {
         display: none;
     }
@@ -42,27 +47,29 @@
     .bg-grey {
         background-color: #eee;
     }
+
     .table-head, .table-body .table-row {
         display: table;
         width: 100%;
         table-layout: fixed;
     }
 
-   .A4pb {
-       padding-bottom : 30px !important;
-   }
+    .A4pb {
+        padding-bottom: 30px !important;
+    }
 
     .A6pb {
         padding-bottom: 15px;
     }
 
     .A4h {
-        height:1200px;
+        height: 1200px;
     }
 
     .A6h {
         height: 600px;
     }
+
     .A4w45 {
         width: 45px;
     }
@@ -139,13 +146,12 @@
             </button>
         </div>
 
-        <div class="card" v-show="!isPreview" style="font-size: 0.85em; color: #6c757d !important;" >
+        <div class="card" v-show="!isPreview" style="font-size: 0.85em; color: #6c757d !important;">
             <div class="card-body">
-                <table class="table text-secondary" style="font-size: 0.85em; color: #6c757d !important;" >
+                <table class="table text-secondary" style="font-size: 0.85em; color: #6c757d !important;">
                     <thead class="thead-light table-head">
                         <tr class="table-row">
                             <th style="width: 45px" scope="col">#</th>
-                            <th class="text-center" v-if="Id" scope="col"></th>
                             <th class="text-center" style="width: 200px;" scope="col">Name</th>
                             <th class="text-center" scope="col">HSN/SAC</th>
                             <th class="text-center" scope="col">Price</th>
@@ -160,7 +166,6 @@
                     <tbody class="table-body">
                         <tr class="table-row" v-for="(item,index) in items">
                             <td style="width: 45px">{{index+1}}</td>
-                            <td v-if="Id"><input type="text" readonly v-model="item.Name" class="form-control form-control-sm" /></td>
                             <td style="width: 200px;">
                                 <select v-bind:id="'product-sel-'+index" :data-id="index" class="product-select-2 js-example-basic-single js-states form-control"></select>
                             </td>
@@ -325,26 +330,26 @@
                 </div>
             </div>
         </div>
-        
-    
-    
-    @*Modal for success on save bill*@
-    <div class="modal" id="success-modal" tabindex="-1" role="dialog">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Bill saved successfully.</h5>
-                </div>
-                <div class="modal-body">
-                    <p>You can Print, Edit and Delete the bill from the Sales grid.</p>
-                    <p>Please <a href="/Sale/List">click here</a> to go the sales grid</p>
+
+
+
+        @*Modal for success on save bill*@
+        <div class="modal" id="success-modal" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Bill saved successfully.</h5>
+                    </div>
+                    <div class="modal-body">
+                        <p>You can Print, Edit and Delete the bill from the Sales grid.</p>
+                        <p>Please <a href="/Sale/List">click here</a> to go the sales grid</p>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-    
 
-    <div id="print-bill" class="card" v-show="isPreview" style="color: #6c757d !important; font-size: 0.90em; border:none">
+
+        <div id="print-bill" class="card" v-show="isPreview" style="color: #6c757d !important; font-size: 0.90em; border:none">
             <div class="card-header text-center" style="border:none">
                 <strong class="text-center">Tax Invoice</strong>
                 <span class="pull-right">(ORIGINAL FOR RECIPIENT)</span>
@@ -428,8 +433,6 @@
                                         <th class="border-right border-top border-bottom text-center" scope="col" v-bind:class="{ A4w400 : IsA4, A6w200 : !IsA4}">Description of Goods</th>
                                         <th class="border-right border-top border-bottom text-center" scope="col">HSN/SAC</th>
                                         <th class="border-right border-top border-bottom text-center" scope="col">GST Rate</th>
-                                        @*<th scope="col">SGST Tax</th>
-                                <th scope="col">CGST Tax</th>*@
                                         <th class="border-right border-top border-bottom text-center" scope="col">Quantity</th>
                                         <th class="border-right border-top border-bottom text-center" scope="col">Rate</th>
                                         <th class="border-right border-top border-bottom text-center" scope="col">per</th>
@@ -443,8 +446,6 @@
                                         <td class="left strong border-right" v-bind:class="{ A4w400 : IsA4, A6w200 : !IsA4}">{{item.Name}}</td>
                                         <td class="border-right text-center">{{item.HSN}}</td>
                                         <td class="text-center border-right">{{item.Name ? displayFormat(item.GST) + '%' : ''}}</td>
-                                        @*<td class="center">{{displayFormat(item.TotalSGSTAmount)}}</td>
-        <td class="center">{{displayFormat(item.TotalCGSTAmount)}}</td>*@
                                         <td class="border-right">{{item.Name ? item.Quantity : ''}}</td>
                                         <td class="border-right">{{item.Name ? displayFormat(item.Price) : ''}}</td>
                                         <td class="border-right">{{item.Name ? item.MeasuringUnit : ''}}</td>
@@ -558,10 +559,10 @@
                     This is a Computer Generated Invoice.
                 </div>
             </div>
+        </div>
     </div>
-</div>
-<script src="~/Scripts/NumberToWords.js"></script>
-<script>
+    <script src="~/Scripts/NumberToWords.js"></script>
+    <script>
     $(document).ready(function() {
         var items = [];
         for (var i = 0; i < 25; i++) {
@@ -851,7 +852,17 @@
                             self.items[index].MeasuringUnit = data.MeasuringUnit;
                             self.calculatePerItemAmount(index);
                         });
-                }
+                },
+                prefillSelect2Data: function (count) {
+                    var self = this;
+                    var ele = $(".product-select-2");
+                    for (var i = 0; i < count; i++) {
+                        var curr = $(ele[i]);
+                        // setting negative id so that on search of select works properly if value is overriden.
+                        var option = new Option(self.items[i].Name, "-2");
+                        curr.append(option).trigger('change');
+                    }
+                },
             },
             computed: {
                 taxSlot: function () {
@@ -923,6 +934,11 @@
                             self.Date = data.SaleDetail.FormatDate;
                             self.Id = data.SaleDetail.Id;
 
+                            if (data.Customer.Name) {
+                                var option = new Option(data.Customer.Name, "-2");
+                                $(".customer-select-2").append(option).trigger('change');
+                            }
+
                             if (self.items.length) {
                                 data.SaleItems.forEach(function(data, index) {
                                     self.items[index].Name = data.Name;
@@ -942,6 +958,7 @@
                                     self.items[index].HSN = data.HSN;
                                     self.items[index].MeasuringUnit = data.MeasuringUnit;
                                 });
+                                self.prefillSelect2Data(data.SaleItems.length);
                             };
                         });
                 }
@@ -955,6 +972,6 @@
             }
         });
     });
-</script>
-<script src="~/Scripts/customValidation.js"></script>
+    </script>
+    <script src="~/Scripts/customValidation.js"></script>
 
