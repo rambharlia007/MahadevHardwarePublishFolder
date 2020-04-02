@@ -312,6 +312,7 @@
                     this.calculateDiscount(currentItem);
                 },
                 calculateDiscount: function (currentItem) {
+                    var self = this;
                     var tax = currentItem.CGST + currentItem.SGST;
                     var cp = parseFloat(currentItem.Price);
                     var price = cp + ((tax / 100) * cp);
