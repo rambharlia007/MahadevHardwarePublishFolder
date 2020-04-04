@@ -86,6 +86,11 @@
             //        }
             //    }
             //});
+
+            setTimeout(function () {
+                $('[data-toggle="tooltip"]').tooltip();
+            }, 1000);
+
             $(':input[type="number"]').keypress(function (e) {
                 var inputKeyCode = e.keyCode ? e.keyCode : e.which;
                 if (inputKeyCode !== null) {

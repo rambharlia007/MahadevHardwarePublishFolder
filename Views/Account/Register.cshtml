@@ -145,7 +145,7 @@
                                         <input type="radio" checked v-on:click="check(false)"> Deactivate Stock Count
                                     </label>
                                     <span style="padding-left:10px;">
-                                        <i class="fa fa-info-circle" data-toggle="tooltip" title="a check of how much item/product a store or company has at a particular time"></i>
+                                        <i class="fa fa-info-circle fa-lg" data-toggle="tooltip" title="a check of how much item/product a store or company has at a particular time"></i>
                                     </span>
                                 </div>
                             </div>
@@ -225,7 +225,6 @@
             },
             mounted() {
                 this.getUsers();
-                $('[data-toggle="tooltip"]').tooltip();
                 validation[0].register();
             }
         });

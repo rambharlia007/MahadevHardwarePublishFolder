@@ -99,7 +99,8 @@
                             <th>CGST (%)</th>
                             <th>Discount %</th>
                             <th>List Price</th>
-                            <th>Discount Price</th>
+                            <th>Buy Price</th>
+                            <th>Sell Price</th>
                             <th>Delete</th>
                         </tr>
                     </thead>
@@ -188,6 +189,12 @@
                                     <input readonly v-model="item.DiscountPrice" type="number" class="form-control">
                                 </div>
                             </div>
+                            <div class="form-group row">
+                                <label class="col-md-3 col-form-label">Discount Price</label>
+                                <div class="col-sm-6">
+                                    <input readonly v-model="item.SellPrice" type="number" class="form-control">
+                                </div>
+                            </div>
                         </form>
                     </div>
 
@@ -224,7 +231,8 @@
                                     <th scope="col">CGST (%)</th>
                                     <th scope="col">Discount %</th>
                                     <th scope="col">List Price</th>
-                                    <th scope="col">Discount Price</th>
+                                    <th scope="col">Buy Price</th>
+                                    <th scope="col">Sell Price</th>
                                 </tr>
                             </thead>
                             <tbody class="table-body">
@@ -247,6 +255,7 @@
                                     <td> <input type="number" step=".01" v-model="item.Discount" v-on:keyup="calculatePerItemDiscount(index)" class="form-control form-control-sm"></td>
                                     <td> <input type="number" v-model="item.Price" cv="required" v-on:keyup="calculatePerItemDiscount(index)" class="form-control form-control-sm"></td>
                                     <td> <input type="number" readonly v-model="item.DiscountPrice" class="form-control form-control-sm"></td>
+                                    <td> <input type="number" v-model="item.SellPrice" class="form-control form-control-sm"></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -279,6 +288,7 @@
                     Quantity: "",
                     MeasuringUnit: "NOS",
                     DiscountPrice: "",
+                    SellPrice: "",
                     HSN: ""
                 });
             }
@@ -437,6 +447,8 @@
                 getTableData: function() {
                     var self = this;
                     self.tableRef = $("#product-table").DataTable({
+                        "scrollY": "180px",
+                        "paging": false,
                         ajax: {
                             url: "/item/GetData",
                             type: "GET",
@@ -456,8 +468,8 @@
                             {
                                 data: "HSN",
                                 render: function (data, type, row, meta) {
-                                    return `<span class="edit-item grid-edit" data-id=${row.Id}>${data}</span>`;
-
+                                    var validData = data === null ? 'NA' : data;
+                                    return `<span class="edit-item grid-edit" data-id=${row.Id}>${validData}</span>`;
                                 }
                             },
                             { data: "MeasuringUnit" },
@@ -468,6 +480,7 @@
                             { data: "Discount" },
                             { data: "Price" },
                             { data: "DiscountPrice" },
+                            { data: "SellPrice" },
                             {
                                 render: function(data, type, row, meta) {
                                     return `<i class="fa fa-trash pointer delete-item" data-id=${row.Id}></i>`;
