@@ -420,6 +420,7 @@
                         $(".table-body").scrollTop(height)
                         validation[0].register();
                         self.bindAddPurchaseDateComponent();
+                        self.initSelect2();
                         validation[0].collapse();
                     }, 0)
                 },
@@ -484,7 +485,9 @@
                         self.alertFailureMessage = "Internal server error";
                     });
                 },
-                openModalForAddPurchase: function() {
+                openModalForAddPurchase: function () {
+                    var self = this;
+                    self.initSelect2();
                     $("#add-purchase").modal("show");
                 },
                 displayFormat: function (data) {
@@ -514,7 +517,7 @@
                                 });
 
                                 return {
-                                    results: customers
+                                    results: distributors
                                 };
                             },
                             cache: true
@@ -527,25 +530,11 @@
                         function (e) {
                             var index = parseInt($(this).attr('data-id'));
                             var data = e.params.data;
-                            self.items[index].ItemId = data.id;
-                            self.items[index].Name = data.text;
-                            self.items[index].Price = data.Price;
-                            self.items[index].GST = data.CGST + data.SGST;
-                            self.items[index].CGST = data.CGST;
-                            self.items[index].SGST = data.SGST;
-                            self.items[index].Quantity = 1;
-                            self.items[index].Discount = data.Discount || 0;
-                            self.items[index].DiscountPrice = data.DiscountPrice;
-                            self.items[index].HSN = data.HSN;
-                            self.items[index].Id = 0;
-                            self.items[index].MeasuringUnit = data.MeasuringUnit;
-                            self.calculatePerItemAmount(index);
+                            self.newPurchases[index].DistributorGSTIN = data.GSTIN;
                         });
                 },
                 saveNewPurchase: function() {
                     var self = this;
-                   
-
                    
                     var isNotValid = validation[0].isTableDataValid("add-purchase") > 0;
 
@@ -763,7 +752,7 @@
 
                 $('.date-range').datetextentry({
                     field_order: 'DMY',
-                    on_change: function(date_str) {
+                    on_change: function (date_str) {
                         if (date_str) {
                             var value = $(this)[0].$element.attr("id");
                             if (value === "to-date") {

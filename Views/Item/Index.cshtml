@@ -184,15 +184,15 @@
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <label class="col-md-3 col-form-label">Discount Price</label>
+                                <label class="col-md-3 col-form-label">Buy Price</label>
                                 <div class="col-sm-6">
                                     <input readonly v-model="item.DiscountPrice" type="number" class="form-control">
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <label class="col-md-3 col-form-label">Discount Price</label>
+                                <label class="col-md-3 col-form-label">Sell Price</label>
                                 <div class="col-sm-6">
-                                    <input readonly v-model="item.SellPrice" type="number" class="form-control">
+                                    <input v-model="item.SellPrice" type="number" class="form-control">
                                 </div>
                             </div>
                         </form>
@@ -255,7 +255,9 @@
                                     <td> <input type="number" step=".01" v-model="item.Discount" v-on:keyup="calculatePerItemDiscount(index)" class="form-control form-control-sm"></td>
                                     <td> <input type="number" v-model="item.Price" cv="required" v-on:keyup="calculatePerItemDiscount(index)" class="form-control form-control-sm"></td>
                                     <td> <input type="number" readonly v-model="item.DiscountPrice" class="form-control form-control-sm"></td>
-                                    <td> <input type="number" v-model="item.SellPrice" class="form-control form-control-sm"></td>
+                                    <td style="display:inline-flex"> <input type="number" v-model="item.SellPrice" class="form-control form-control-sm">
+                                         <button type="button" style="padding:0px 0px 0px 5px; color:red" class="btn btn-link" v-on:click="removeNewProduct(index)">X</button>
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
@@ -312,10 +314,19 @@
                 addEmptyProduct: function () {
                     this.newItems.push(addEmptyNewItems()[0]);
                     var height = 50 * this.newItems.length;
+                    var currentTr = this.newItems.length;
                     setTimeout(function () {
                         $(".table-body").scrollTop(height)
                         validation[0].register();
-                    },300)
+                        $("#add-product-table tr:eq(" + currentTr + ") input:first").focus();
+                    }, 300)
+                },
+                removeNewProduct: function (index) {
+                    if (this.newItems.length > 1) {
+                        if (confirm("Are you sure you want to delete the Product entry")) {
+                            this.newItems.splice(index, 1);
+                        }
+                    }
                 },
                 copyTax: function (index) {
                     this.newItems[index].CGST = this.newItems[index].SGST;
@@ -353,6 +364,11 @@
                 },
                 openModalForAddProduct: function() {
                     $("#add-product").modal("show");
+                    this.focusInput(0);
+                },
+                focusInput: function (index) {
+                    var tr = index + 1;
+                    setTimeout(function () { $("#add-product-table tr:eq(" + tr + ") input:first").focus() }, 100);
                 },
                 closeModal: function (id) {
                     var self = this;
@@ -427,7 +443,10 @@
 
                     $(".delete-item").click(function(e) {
                         var id = $(this).attr("data-id");
-                        self.deleteItem(id);
+                        var name = $(this).attr("data-name");
+                        var yes = confirm("Are you sure you want to delete product " + name);
+                        if (yes === true)
+                            self.deleteItem(id);
                     });
                 },
                 closeAlertMessage: function(property) {
@@ -482,14 +501,14 @@
                             { data: "DiscountPrice" },
                             { data: "SellPrice" },
                             {
-                                render: function(data, type, row, meta) {
-                                    return `<i class="fa fa-trash pointer delete-item" data-id=${row.Id}></i>`;
+                                render: function (data, type, row, meta) {
+                                    return `<i class="fa fa-trash pointer delete-item" data-name=${row.Name} data-id=${row.Id}></i>`;
                                 }
                             }
                         ],
                         lengthMenu: [[5, 20, 25, 30, 100], [5, 20, 25, 30, 100]],
                         initComplete: function(settings, json) {
-                            self.bindTableClickEvents();
+                            //self.bindTableClickEvents();
                             self.hideStockCountColumns();
                         }
                     });

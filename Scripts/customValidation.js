@@ -18,6 +18,28 @@
             }
             return $("form .custom-alert").length;
         },
+        confirm: function (mes) {
+            $("#confirmation-modal").modal("show").on("click", ".confirm-success", function () {
+                $("#confirmation-modal").modal("hide");
+                return true;
+            }).on("click", ".confirm-failure", function () {
+                $("#confirmation-modal").modal("hide");
+                return false;
+            });
+                
+            //$("#confirmation-modal .modal-body p").text(mes);
+
+            //$(".confirm-success").on("click", function () {
+            //    $("#confirmation-modal").modal("hide");
+            //    return true;
+            //});
+
+            //$(".confirm-failure").on("click", function () {
+            //    $("#confirmation-modal").modal("hide");
+            //    return false;
+            //});
+
+        },
         isTableDataValid: function (id) {
             var x = $("#" + id).find(":input.form-control");
             for (i = 0; i < x.length; i++) {
@@ -69,6 +91,7 @@
         },
         register: function () {
 
+           
             //is only for date picker
             //$(':input[cv="date"]').focusout(function (e) {
             //    var currEle = $(e.target).parent();

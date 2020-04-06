@@ -10,6 +10,16 @@
         visibility:hidden;
     }
 
+    .bill-grid td {
+        vertical-align: middle !important;
+        padding:5px !important
+    }
+
+    .bill-grid th {
+        vertical-align: middle !important;
+        padding: 5px !important
+    }
+
     tr:hover .show-on-hover {
         visibility: visible;
     }
@@ -171,14 +181,14 @@
 
         <div class="card" v-show="!isPreview" style="font-size: 0.85em; color: #6c757d !important;">
             <div class="card-body">
-                <table class="table text-secondary" style="font-size: 0.85em; color: #6c757d !important;">
+                <table class="table text-secondary bill-grid" style="font-size: 0.85em; color: #6c757d !important;">
                     <thead class="thead-light table-head">
                         <tr class="table-row">
-                            <th style="width: 5px" scope="col">#</th>
+                            <th style="width: 15px; padding: 0px !important" scope="col">#</th>
                             <th class="text-center" style="width: 240px;" scope="col">Name</th>
                             <th class="text-center" scope="col">HSN/SAC</th>
-                            <th class="text-center" scope="col">Price</th>
                             <th class="text-center" scope="col">Quantity</th>
+                            <th class="text-center" scope="col">Price</th>
                             <th class="text-center" scope="col">Disc %</th>
                             <th class="text-center" scope="col">GST %</th>
                             <th class="text-center" scope="col">CGST</th>
@@ -191,22 +201,25 @@
                     </thead>
                     <tbody class="table-body">
                         <tr class="table-row" v-for="(item,index) in items">
-                            <td style="width: 5px">{{index+1}}</td>
+                            <td style="width: 15px; padding: 0px !important">{{index+1}}</td>
                             <td style="width: 240px;">
                                 <select v-bind:id="'product-sel-'+index" :data-id="index" class="product-select-2 js-example-basic-single js-states form-control"></select>
+                                <input type="text" v-model="item.Name" style="margin-top:5px; height:20px;" class="form-control form-control-sm">
                             </td>
                             <td> <input type="text" readonly v-model="item.HSN" class="form-control form-control-sm"></td>
-                            <td> <input type="number" v-model="item.Price" v-on:keyup="calculatePerItemAmount(index)" class="form-control form-control-sm"></td>
                             <td> <input type="number" v-model="item.Quantity" v-on:keyup="calculatePerItemAmount(index)" class="form-control form-control-sm"></td>
+                            <td> <input type="number" v-model="item.Price" v-on:keyup="calculatePerItemAmount(index)" class="form-control form-control-sm"></td>
                             <td> <input type="number" v-model="item.Discount" v-on:keyup="calculatePerItemAmount(index)" class="form-control form-control-sm"></td>
                             <td> <input type="number" v-model="item.GST" v-on:keyup="calculatePerItemAmount(index)" class="form-control form-control-sm"></td>
                             <td> <input type="number" readonly v-model="item.TotalCGSTAmount" class="form-control form-control-sm"></td>
                             <td> <input type="number" readonly v-model="item.TotalSGSTAmount" class="form-control form-control-sm"></td>
                             <td> <input type="text" readonly v-model="item.SubTotal" class="form-control form-control-sm"></td>
-                            <td style="display:inline-flex">
+                            <td>
                                 <input type="number" v-model="item.TotalAmount" v-on:keyup="calculatePerItemAmount(index, false)" class="form-control form-control-sm">
-                                <i class="fa fa-info-circle fa-lg show-on-hover" style="padding:10px 0px 10px 5px; width:0px !important" data-toggle="tooltip" title="If Total value is given as the input. Price, CGST, SGST will be computed based on Tax slab, Discount slab and Total quantity."></i>
                             </td>
+                            @*<td>
+            <i class="fa fa-info-circle fa-lg show-on-hover" style="padding:10px 0px 10px 5px; width:0px !important" data-toggle="tooltip" title="If Total value is given as the input. Price, CGST, SGST will be computed based on Tax slab, Discount slab and Total quantity."></i>
+        </td>*@
                         </tr>
                     </tbody>
                 </table>
@@ -518,11 +531,11 @@
                                     <td class="text-center border-left border-right A4w45">{{index+1}}</td>
                                     <td class="left strong border-right A4w400" style="padding-left:10px !important;">{{item.Name}}</td>
                                     <td class="border-right text-center">{{item.HSN}}</td>
-                                    <td class="text-center border-right">{{displayFormat(item.GST, true) + '%'}}</td>
-                                    <td class="border-right text-center">{{item.Quantity}}</td>
+                                    <td class="text-center border-right">{{displayFormat(item.GST, true)}}</td>
+                                    <td class="border-right text-center">{{item.Quantity}} {{item.MeasuringUnit}}</td>
                                     <td class="border-right text-center">{{displayFormat(item.Price)}}</td>
                                     <td class="border-right text-center">{{item.MeasuringUnit}}</td>
-                                    <td class="border-right text-center">{{displayFormat(item.Discount, true) + '%'}}</td>
+                                    <td class="border-right text-center">{{displayFormat(item.Discount, true)}}</td>
                                     <td class="text-right text-center border-right">{{displayFormat(item.SubTotal)}}</td>
                                 </tr>
                                 <tr style="height:23px;">
@@ -772,8 +785,11 @@
                     var formatNumber = Number(data).toLocaleString(undefined, { minimumFractionDigits: 2 })
                     if (formatNumber && isPercent) {
                         var split = formatNumber.split(".");
-                        if (split[1][0].includes("0")) {
-                            return split[0];
+                        if (split[0] !== "0" && split[1][0].includes("0")) {
+                            return split[0] + "%";
+                        }
+                        else if (split[0] === "0") {
+                            return "";
                         }
                     }
                     return formatNumber;
@@ -785,7 +801,9 @@
                 },
                 print: function (id) {
                     this.isPreview = true;
-                    window.print();
+                    var conf = confirm("Are you sure you want to Print the bill")
+                    if (conf === true)
+                        window.print();
                 },
                 afterPrint: function () {
                     if (!this.isPrintOnly)
