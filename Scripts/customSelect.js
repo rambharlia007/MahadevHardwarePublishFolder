@@ -37,7 +37,7 @@ var selectSearchEvent = function (config) {
                     if (res.length) {
                         for (var i = 0; i < res.length; i++) {
                             var item = JSON.stringify(res[i]);
-                            options.push(`<li class="list-group-item list-group-item-custom-select custom-options" data = '"${item}"'>  ${res[i][config.prop]} </li>`);
+                            options.push(`<li class="list-group-item list-group-item-custom-select custom-options" data = '${item}'>  ${res[i][config.prop]} </li>`);
                         }
                     }
                     else { //<button type="button" class="btn btn-link">Add edit value </button> 
