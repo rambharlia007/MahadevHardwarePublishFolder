@@ -24,13 +24,6 @@
         visibility: visible;
     }
 
-    li:hover {
-        z-index: 2;
-        color: #fff;
-        background-color: #007bff;
-        border-color: #007bff;
-    }
-
     .table-sm td, .table-sm th {
         padding: 0.15rem !important;
     }
@@ -92,8 +85,6 @@
     .A4w400 {
         width: 550px;
     }
-
-    
 
     @@media only screen and (min-width: 768px) {
         .table-body {
@@ -205,21 +196,16 @@
                             <th class="text-center" scope="col">Sub total</th>
                             <th class="text-center" scope="col">
                                 Total
-                                <i class="fa fa-info-circle fa-lg" style="position:absolute; top:30px; right:40px" data-toggle="tooltip" title="If Total value is given as the input. Price, CGST, SGST will be computed based on Tax slab, Discount slab and Total quantity."></i>
                             </th>
                         </tr>
                     </thead>
                     <tbody class="table-body">
                         <tr class="table-row" v-for="(item,index) in items">
                             <td style="width: 15px; padding: 0px !important">{{index+1}}</td>
-                            <td style="width: 240px;">
-                                <div class="custom-select-rmb" style="position:relative !important">
-                                    <input type="text" :data-index="index" v-model="item.Name" class="form-control form-control-sm" placeholder="Search">
-                                    <ul class="list-group custom-select-border" style="position:absolute; z-index:1000; width:100%;"></ul>
-                                </div>
-                                @*<select v-if="!item.isEditName" v-bind:id="'product-sel-'+index" :data-id="index" class="product-select-2 js-example-basic-single js-states form-control"></select>
+                            <td style="width: 240px; display:inline-flex">
+                                <select v-if="!item.isEditName" v-bind:id="'product-sel-'+index" :data-id="index" class="product-select-2 js-example-basic-single js-states form-control"></select>
                                 <i class="fa fa-edit" style="cursor:pointer !important"></i>
-                                <input v-if="item.isEditName" type="text" v-model="item.Name" style="margin-top:5px; height:20px;" class="form-control form-control-sm">*@
+                                <input v-if="item.isEditName" type="text" v-model="item.Name" style="margin-top:5px; height:20px;" class="form-control form-control-sm">
                             </td>
                             <td> <input type="text" readonly v-model="item.HSN" class="form-control form-control-sm"></td>
                             <td> <input type="number" v-model="item.Quantity" v-on:keyup="calculatePerItemAmount(index)" class="form-control form-control-sm"></td>
@@ -229,10 +215,12 @@
                             <td> <input type="number" readonly v-model="item.TotalCGSTAmount" class="form-control form-control-sm"></td>
                             <td> <input type="number" readonly v-model="item.TotalSGSTAmount" class="form-control form-control-sm"></td>
                             <td> <input type="text" readonly v-model="item.SubTotal" class="form-control form-control-sm"></td>
-                            <td style="position:relative">
+                            <td>
                                 <input type="number" v-model="item.TotalAmount" v-on:keyup="calculatePerItemAmount(index, false)" class="form-control form-control-sm">
-                                <i class="fa fa-trash fa-lg show-on-hover" v-on:click="deleteBillRow(index)" style="position:absolute; right:10px; top:15px; cursor:pointer"></i>
                             </td>
+                            @*<td>
+            <i class="fa fa-info-circle fa-lg show-on-hover" style="padding:10px 0px 10px 5px; width:0px !important" data-toggle="tooltip" title="If Total value is given as the input. Price, CGST, SGST will be computed based on Tax slab, Discount slab and Total quantity."></i>
+        </td>*@
                         </tr>
                     </tbody>
                 </table>
@@ -673,34 +661,29 @@
 </div>
     <script src="~/Scripts/NumberToWords.js"></script>
     <script>
-        $(document).ready(function () {
-
-            var getNewItemRow = function () {
-                var row = {
-                    Name: "",
-                    HSN: "",
-                    MeasuringUnit: "",
-                    Quantity: "",
-                    TotalCGSTAmount: "",
-                    TotalSGSTAmount: "",
-                    TotalAmount: "",
-                    SubTotal: "",
-                    Price: "",
-                    GST: "",
-                    CGST: "",
-                    SGST: "",
-                    Discount: "",
-                    TotalDiscount: "",
-                    ItemId: 0,
-                    SaleId: 0,
-                    Id: 0,
-                    isEditName: false
-                }
-                return row;
-            }
+    $(document).ready(function() {
         var items = [];
-            for (var i = 0; i < 25; i++) {
-                items.push(getNewItemRow());
+        for (var i = 0; i < 25; i++) {
+            items.push({
+                Name: "",
+                HSN: "",
+                MeasuringUnit: "",
+                Quantity: "",
+                TotalCGSTAmount: "",
+                TotalSGSTAmount: "",
+                TotalAmount: "",
+                SubTotal:"",
+                Price: "",
+                GST: "",
+                CGST: "",
+                SGST: "",
+                Discount: "",
+                TotalDiscount: "",
+                ItemId: 0,
+                SaleId: 0,
+                Id: 0,
+                isEditName:false
+            });
         }
 
         function getDate() {
@@ -759,14 +742,6 @@
             el: '#app',
             data: obj,
             methods: {
-                deleteBillRow: function (index) {
-                    var isconf = confirm("Are you sure you want to remove the item from the bill ?");
-                    if (isconf === true) {
-                        this.items.splice(index, 1);
-                        this.items.push(getNewItemRow());
-                        this.initSelect2();
-                    }
-                },
                 openBillSettingsModal: function () {
                     $("#bill-settings-modal").modal({ backdrop: 'static', keyboard: false, show: true });
                 },
@@ -919,43 +894,43 @@
                 initSelect2: function () {
                     var self = this;
 
-                    //$(".product-select-2").select2({
-                    //    ajax: {
-                    //        url: "/item/GetDataBySearch",
-                    //        dataType: 'json',
-                    //        delay: 250,
-                    //        data: function (params) {
-                    //            return {
-                    //                q: params.term,
-                    //                page: params.page
-                    //            };
-                    //        },
-                    //        processResults: function (data, params) {
-                    //            var products = [];
-                    //            var productColumn = self.billSettings.ProductColumn;
-                    //            data.forEach((product) => {
-                    //                products.push({
-                    //                    id: product.Id,
-                    //                    text: product.Name,
-                    //                    Price: product[productColumn],
-                    //                    CGST: product.CGST,
-                    //                    SGST: product.SGST,
-                    //                    DiscountPrice: product.DiscountPrice,
-                    //                    Discount: product.Discount,
-                    //                    HSN: product.HSN,
-                    //                    MeasuringUnit: product.MeasuringUnit
-                    //                });
-                    //            });
+                    $(".product-select-2").select2({
+                        ajax: {
+                            url: "/item/GetDataBySearch",
+                            dataType: 'json',
+                            delay: 250,
+                            data: function (params) {
+                                return {
+                                    q: params.term,
+                                    page: params.page
+                                };
+                            },
+                            processResults: function (data, params) {
+                                var products = [];
+                                var productColumn = self.billSettings.ProductColumn;
+                                data.forEach((product) => {
+                                    products.push({
+                                        id: product.Id,
+                                        text: product.Name,
+                                        Price: product[productColumn],
+                                        CGST: product.CGST,
+                                        SGST: product.SGST,
+                                        DiscountPrice: product.DiscountPrice,
+                                        Discount: product.Discount,
+                                        HSN: product.HSN,
+                                        MeasuringUnit: product.MeasuringUnit
+                                    });
+                                });
 
-                    //            return {
-                    //                results: products
-                    //            };
-                    //        },
-                    //        cache: true
-                    //    },
-                    //    placeholder: 'Search for a Product',
-                    //    minimumInputLength: 1
-                    //});
+                                return {
+                                    results: products
+                                };
+                            },
+                            cache: true
+                        },
+                        placeholder: 'Search for a Product',
+                        minimumInputLength: 1
+                    });
 
 
                     $(".customer-select-2").select2({
@@ -1002,14 +977,13 @@
                             self.CustomerGSTIN = data.GSTIN;
                         });
 
-
-                    var obj = {
-                        ele: ".custom-select-rmb", endPoint: "/item/GetDataBySearch", prop: "Name", callback: function (ele, value) {
+                    $('.product-select-2').on('select2:select',
+                        function (e) {
                             var billColumn = self.billSettings.BillColumn;
-                            var index = parseInt(ele.attr('data-index'));
-                            var data = JSON.parse(value);
-                            self.items[index].ItemId = data.Id;
-                            self.items[index].Name = data.Name;
+                            var index = parseInt($(this).attr('data-id'));
+                            var data = e.params.data;
+                            self.items[index].ItemId = data.id;
+                            self.items[index].Name = data.text;
                             self.items[index][billColumn] = data.Price;
                             self.items[index].GST = data.CGST + data.SGST;
                             self.items[index].CGST = data.CGST;
@@ -1025,34 +999,7 @@
                                 self.calculatePerItemAmount(index, false);
                             else
                                 self.calculatePerItemAmount(index);
-                        }
-                    };
-
-                    selectSearchEvent(obj);
-
-                    //$('.product-select-2').on('select2:select',
-                    //    function (e) {
-                    //        var billColumn = self.billSettings.BillColumn;
-                    //        var index = parseInt($(this).attr('data-id'));
-                    //        var data = e.params.data;
-                    //        self.items[index].ItemId = data.id;
-                    //        self.items[index].Name = data.text;
-                    //        self.items[index][billColumn] = data.Price;
-                    //        self.items[index].GST = data.CGST + data.SGST;
-                    //        self.items[index].CGST = data.CGST;
-                    //        self.items[index].SGST = data.SGST;
-                    //        self.items[index].Quantity = 1;
-                    //        self.items[index].Discount = data.Discount || 0;
-                    //        self.items[index].DiscountPrice = data.DiscountPrice;
-                    //        self.items[index].HSN = data.HSN;
-                    //        self.items[index].Id = 0;
-                    //        self.items[index].MeasuringUnit = data.MeasuringUnit;
-
-                    //        if (billColumn === "TotalAmount")
-                    //            self.calculatePerItemAmount(index, false);
-                    //        else
-                    //            self.calculatePerItemAmount(index);
-                    //    });
+                        });
                 },
                 prefillSelect2Data: function (count) {
                     var self = this;
