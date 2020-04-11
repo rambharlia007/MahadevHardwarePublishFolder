@@ -23,8 +23,22 @@
             background-color: #1f6b8a;
         }
 
+        tr:hover .show-on-hover {
+            visibility: visible;
+        }
+
+        tr .show-on-hover {
+            visibility: hidden;
+        }
+
         .form-control {
             border-radius: 0 !important;
+        }
+
+        /*hover datable row*/
+        .dataTable tbody tr:hover {
+            background-color: #eee;
+            cursor: pointer;
         }
 
         .custom-options {
@@ -159,6 +173,7 @@
 
         .custom-alert {
             color: red;
+            font-size:0.8em;
         }
 
         .scroll {

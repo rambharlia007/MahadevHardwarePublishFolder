@@ -6,9 +6,7 @@
 @*<link href="~/Content/paper.css" rel="stylesheet" />*@
 <style>
 
-    tr .show-on-hover {
-        visibility:hidden;
-    }
+   
 
     .bill-grid td {
         vertical-align: middle !important;
@@ -18,10 +16,6 @@
     .bill-grid th {
         vertical-align: middle !important;
         padding: 5px !important
-    }
-
-    tr:hover .show-on-hover {
-        visibility: visible;
     }
 
     li:hover {
@@ -751,8 +745,8 @@
             emptyProductCount: [],
             isComputeTaxOnTotal: true,
             billSettings: {
-                productColumn: "",
-                billColumn:""
+                ProductColumn: "",
+                BillColumn:""
             }
         }
         new Vue({
@@ -918,46 +912,6 @@
                 },
                 initSelect2: function () {
                     var self = this;
-
-                    //$(".product-select-2").select2({
-                    //    ajax: {
-                    //        url: "/item/GetDataBySearch",
-                    //        dataType: 'json',
-                    //        delay: 250,
-                    //        data: function (params) {
-                    //            return {
-                    //                q: params.term,
-                    //                page: params.page
-                    //            };
-                    //        },
-                    //        processResults: function (data, params) {
-                    //            var products = [];
-                    //            var productColumn = self.billSettings.ProductColumn;
-                    //            data.forEach((product) => {
-                    //                products.push({
-                    //                    id: product.Id,
-                    //                    text: product.Name,
-                    //                    Price: product[productColumn],
-                    //                    CGST: product.CGST,
-                    //                    SGST: product.SGST,
-                    //                    DiscountPrice: product.DiscountPrice,
-                    //                    Discount: product.Discount,
-                    //                    HSN: product.HSN,
-                    //                    MeasuringUnit: product.MeasuringUnit
-                    //                });
-                    //            });
-
-                    //            return {
-                    //                results: products
-                    //            };
-                    //        },
-                    //        cache: true
-                    //    },
-                    //    placeholder: 'Search for a Product',
-                    //    minimumInputLength: 1
-                    //});
-
-
                     $(".customer-select-2").select2({
                         ajax: {
                             url: "/contact/search",
@@ -1002,15 +956,15 @@
                             self.CustomerGSTIN = data.GSTIN;
                         });
 
-
                     var obj = {
                         ele: ".custom-select-rmb", endPoint: "/item/GetDataBySearch", prop: "Name", callback: function (ele, value) {
                             var billColumn = self.billSettings.BillColumn;
+                            var productColumn = self.billSettings.ProductColumn;
                             var index = parseInt(ele.attr('data-index'));
                             var data = JSON.parse(value);
                             self.items[index].ItemId = data.Id;
                             self.items[index].Name = data.Name;
-                            self.items[index][billColumn] = data.Price;
+                            self.items[index][billColumn] = data[productColumn];
                             self.items[index].GST = data.CGST + data.SGST;
                             self.items[index].CGST = data.CGST;
                             self.items[index].SGST = data.SGST;
@@ -1030,29 +984,7 @@
 
                     selectSearchEvent(obj);
 
-                    //$('.product-select-2').on('select2:select',
-                    //    function (e) {
-                    //        var billColumn = self.billSettings.BillColumn;
-                    //        var index = parseInt($(this).attr('data-id'));
-                    //        var data = e.params.data;
-                    //        self.items[index].ItemId = data.id;
-                    //        self.items[index].Name = data.text;
-                    //        self.items[index][billColumn] = data.Price;
-                    //        self.items[index].GST = data.CGST + data.SGST;
-                    //        self.items[index].CGST = data.CGST;
-                    //        self.items[index].SGST = data.SGST;
-                    //        self.items[index].Quantity = 1;
-                    //        self.items[index].Discount = data.Discount || 0;
-                    //        self.items[index].DiscountPrice = data.DiscountPrice;
-                    //        self.items[index].HSN = data.HSN;
-                    //        self.items[index].Id = 0;
-                    //        self.items[index].MeasuringUnit = data.MeasuringUnit;
-
-                    //        if (billColumn === "TotalAmount")
-                    //            self.calculatePerItemAmount(index, false);
-                    //        else
-                    //            self.calculatePerItemAmount(index);
-                    //    });
+                   
                 },
                 prefillSelect2Data: function (count) {
                     var self = this;

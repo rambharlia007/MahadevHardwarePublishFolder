@@ -28,6 +28,14 @@
         table-layout: fixed;
     }
 
+    #add-product-table td {
+        padding: 5px !important
+    }
+
+    #add-product-table th {
+        padding: 5px !important
+    }
+
     @@media only screen and (min-width: 768px) {
         .table-body {
             display: block;
@@ -223,7 +231,7 @@
                             <thead class="thead-light table-head">
                                 <tr class="table-row">
                                     <th style="width: 45px" scope="col">#</th>
-                                    <th style="width:150px !important" scope="col">Name</th>
+                                    <th style="width:250px !important" scope="col">Name</th>
                                     <th scope="col">HSN/SAC</th>
                                     <th scope="col">PER</th>
                                     <th scope="col" v-if="isStockCountEnabled">Quantity Available</th>
@@ -238,7 +246,7 @@
                             <tbody class="table-body">
                                 <tr class="table-row" v-for="(item,index) in newItems">
                                     <td style="width: 45px">{{index+1}}</td>
-                                    <td style="width:150px !important"> <input type="text" cv="required" v-model="item.Name" class="form-control form-control-sm"></td>
+                                    <td style="width:250px !important"> <input type="text" cv="required" v-model="item.Name" class="form-control form-control-sm"></td>
                                     <td> <input type="text" v-model="item.HSN" class="form-control form-control-sm"></td>
                                     <td>
                                         <select class="form-control form-control-sm" v-model="item.MeasuringUnit">
@@ -255,8 +263,9 @@
                                     <td> <input type="number" step=".01" v-model="item.Discount" v-on:keyup="calculatePerItemDiscount(index)" class="form-control form-control-sm"></td>
                                     <td> <input type="number" v-model="item.Price" cv="required" v-on:keyup="calculatePerItemDiscount(index)" class="form-control form-control-sm"></td>
                                     <td> <input type="number" readonly v-model="item.DiscountPrice" class="form-control form-control-sm"></td>
-                                    <td style="display:inline-flex"> <input type="number" v-model="item.SellPrice" class="form-control form-control-sm">
-                                         <button type="button" style="padding:0px 0px 0px 5px; color:red" class="btn btn-link" v-on:click="removeNewProduct(index)">X</button>
+                                    <td style="position:relative;">
+                                        <input type="number" v-model="item.SellPrice" class="form-control form-control-sm">
+                                        <i class="fa fa-trash show-on-hover" v-on:click="removeNewProduct(index)" style="position:absolute; right:15px; top:15px; cursor:pointer"></i>
                                     </td>
                                 </tr>
                             </tbody>
@@ -325,6 +334,11 @@
                     if (this.newItems.length > 1) {
                         if (confirm("Are you sure you want to delete the Product entry")) {
                             this.newItems.splice(index, 1);
+                        }
+                    }
+                    else {
+                        if (confirm("Are you sure you want to clear the entry of the Product")) {
+                            this.newItems = addEmptyNewItems();
                         }
                     }
                 },
@@ -466,8 +480,8 @@
                 getTableData: function() {
                     var self = this;
                     self.tableRef = $("#product-table").DataTable({
+                        "lengthChange": false,
                         "scrollY": "180px",
-                        "paging": false,
                         ajax: {
                             url: "/item/GetData",
                             type: "GET",
@@ -506,7 +520,7 @@
                                 }
                             }
                         ],
-                        lengthMenu: [[5, 20, 25, 30, 100], [5, 20, 25, 30, 100]],
+                        lengthMenu: [[50], [50]],
                         initComplete: function(settings, json) {
                             //self.bindTableClickEvents();
                             self.hideStockCountColumns();
