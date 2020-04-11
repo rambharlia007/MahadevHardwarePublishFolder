@@ -114,6 +114,26 @@
     }
 
     @@media print {
+        /*.border {
+            border: 3px solid black !important;
+        }*/
+
+        .border-right {
+            border-right: 2px solid black !important;
+        }
+
+        .border-top {
+            border-top: 2px solid black !important;
+        }
+
+        .border-bottom {
+            border-bottom: 2px solid black !important;
+        }
+
+        .border-left {
+            border-left: 2px solid black !important;
+        }
+
         #print-bill div {
             font-weight: bold !important;
         }
@@ -138,6 +158,31 @@
             font-weight: bolder !important;
         }
     }
+
+    #print-bill div {
+        font-weight: bold !important;
+    }
+
+    #print-bill tr {
+        max-height: 25px !important;
+    }
+
+    #print-bill td {
+        padding-bottom: 0px !important;
+    }
+
+    #print-bill span {
+        font-weight: bold !important;
+    }
+
+    #print-bill td {
+        font-weight: bold !important;
+    }
+
+    #print-bill th {
+        font-weight: bolder !important;
+    }
+   
     @@page{
         margin : 0;
     }
@@ -822,9 +867,14 @@
                 },
                 print: function (id) {
                     this.isPreview = true;
-                    var conf = confirm("Are you sure you want to Print the bill")
-                    if (conf === true)
-                        window.print();
+                    var conf = confirm("Are you sure you want to Print the bill? If you click OK the bill will be saved");
+                    if (conf === true) {
+                        
+                        this.afterPrint();
+                        setTimeout(function () {
+                            window.print();
+                        }, 1000)
+                    }
                 },
                 afterPrint: function () {
                     if (!this.isPrintOnly)
@@ -1074,10 +1124,10 @@
                     $.get(`/Sale/GetDataById/${id}`,
                         function (data) {
                             self.CustomerAddress = data.Customer.Address,
-                            self.CustomerMobileNumber = data.Customer.MobileNumber,
-                            self.DispatchVehicleNumber = data.SaleDetail.DispatchVehicleNumber,
-                            self.DispatchReferenceName = data.SaleDetail.DispatchReferenceName,
-                            self.CustomerName = data.Customer.Name;
+                                self.CustomerMobileNumber = data.Customer.MobileNumber,
+                                self.DispatchVehicleNumber = data.SaleDetail.DispatchVehicleNumber,
+                                self.DispatchReferenceName = data.SaleDetail.DispatchReferenceName,
+                                self.CustomerName = data.Customer.Name;
                             self.CustomerGSTIN = data.Customer.GSTIN;
                             self.CustomerId = data.Customer.Id;
                             self.TotalCGSTAmount = self.tax / 2;
@@ -1095,13 +1145,13 @@
                             }
 
                             if (self.items.length) {
-                                data.SaleItems.forEach(function(data, index) {
+                                data.SaleItems.forEach(function (data, index) {
                                     self.items[index].Name = data.Name;
                                     self.items[index].Quantity = data.Quantity;
                                     self.items[index].TotalCGSTAmount = data.TotalCGSTAmount;
                                     self.items[index].TotalSGSTAmount = data.TotalSGSTAmount;
-                                    self.items[index].TotalAmount = data.TotalAmount; 
-                                    self.items[index].SubTotal = data.SubTotal; 
+                                    self.items[index].TotalAmount = data.TotalAmount;
+                                    self.items[index].SubTotal = data.SubTotal;
                                     self.items[index].Price = data.Price;
                                     self.items[index].CGST = data.CGST;
                                     self.items[index].SGST = data.SGST;
@@ -1126,7 +1176,6 @@
 
                 self.initSelect2();
                 validation[0].register();
-                window.onafterprint = self.afterPrint;
             }
         });
     });
