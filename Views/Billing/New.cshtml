@@ -87,7 +87,9 @@
         width: 550px;
     }
 
-    
+    .wd100 {
+        width:65px;
+    }
 
     @@media only screen and (min-width: 768px) {
         .table-body {
@@ -233,12 +235,12 @@
                     <thead class="thead-light table-head">
                         <tr class="table-row">
                             <th style="width: 15px; padding: 0px !important" scope="col">#</th>
-                            <th class="text-center" style="width: 240px;" scope="col">Name</th>
+                            <th class="text-center" style="width: 300px;" scope="col">Name</th>
                             <th class="text-center" scope="col">HSN/SAC</th>
-                            <th class="text-center" scope="col">Quantity</th>
+                            <th class="text-center wd100" scope="col">Quantity</th>
                             <th class="text-center" scope="col">Price</th>
-                            <th class="text-center" scope="col">Disc %</th>
-                            <th class="text-center" scope="col">GST %</th>
+                            <th class="text-cente wd100" scope="col">Disc %</th>
+                            <th class="text-center wd100" scope="col">GST %</th>
                             <th class="text-center" scope="col">CGST</th>
                             <th class="text-center" scope="col">SGST</th>
                             <th class="text-center" scope="col">Sub total</th>
@@ -251,7 +253,7 @@
                     <tbody class="table-body">
                         <tr class="table-row" v-for="(item,index) in items">
                             <td style="width: 15px; padding: 0px !important">{{index+1}}</td>
-                            <td style="width: 240px;">
+                            <td style="width: 300px;">
                                 <div class="custom-select-rmb" style="position:relative !important">
                                     <input type="text" :data-index="index" v-model="item.Name" class="form-control form-control-sm" placeholder="Search">
                                     <ul class="list-group custom-select-border" style="position:absolute; z-index:1000; width:100%;"></ul>
@@ -261,10 +263,10 @@
                                 <input v-if="item.isEditName" type="text" v-model="item.Name" style="margin-top:5px; height:20px;" class="form-control form-control-sm">*@
                             </td>
                             <td> <input type="text" readonly v-model="item.HSN" class="form-control form-control-sm"></td>
-                            <td> <input type="number" v-model="item.Quantity" v-on:keyup="calculatePerItemAmount(index)" class="form-control form-control-sm"></td>
+                            <td class="wd100"> <input type="number" v-model="item.Quantity" v-on:keyup="calculatePerItemAmount(index)" class="form-control form-control-sm"></td>
                             <td> <input type="number" v-model="item.Price" v-on:keyup="calculatePerItemAmount(index)" class="form-control form-control-sm"></td>
-                            <td> <input type="number" v-model="item.Discount" v-on:keyup="calculatePerItemAmount(index)" class="form-control form-control-sm"></td>
-                            <td> <input type="number" v-model="item.GST" v-on:keyup="calculatePerItemAmount(index)" class="form-control form-control-sm"></td>
+                            <td class="wd100"> <input type="number" v-model="item.Discount" v-on:keyup="calculatePerItemAmount(index)" class="form-control form-control-sm"></td>
+                            <td class="wd100"> <input type="number" v-model="item.GST" v-on:keyup="calculatePerItemAmount(index)" class="form-control form-control-sm"></td>
                             <td> <input type="number" readonly v-model="item.TotalCGSTAmount" class="form-control form-control-sm"></td>
                             <td> <input type="number" readonly v-model="item.TotalSGSTAmount" class="form-control form-control-sm"></td>
                             <td> <input type="text" readonly v-model="item.SubTotal" class="form-control form-control-sm"></td>
