@@ -6,11 +6,11 @@
 @*<link href="~/Content/paper.css" rel="stylesheet" />*@
 <style>
 
-   
+
 
     .bill-grid td {
         vertical-align: middle !important;
-        padding:5px !important
+        padding: 5px !important
     }
 
     .bill-grid th {
@@ -36,6 +36,7 @@
     .border {
         border: 3px solid black !important;
     }
+
     .border-right {
         border-right: 2px solid black !important;
     }
@@ -52,7 +53,7 @@
         border-left: 2px solid black !important;
     }
 
-    
+
     .hide {
         display: none;
     }
@@ -88,7 +89,11 @@
     }
 
     .wd100 {
-        width:65px;
+        width: 55px;
+    }
+
+    .wd-quantity {
+        width: 75px;
     }
 
     @@media only screen and (min-width: 768px) {
@@ -119,7 +124,6 @@
         /*.border {
             border: 3px solid black !important;
         }*/
-
         .border-right {
             border-right: 2px solid black !important;
         }
@@ -184,9 +188,9 @@
     #print-bill th {
         font-weight: bolder !important;
     }
-   
-    @@page{
-        margin : 0;
+
+    @@page {
+        margin: 0;
     }
 </style>
 
@@ -237,7 +241,7 @@
                             <th style="width: 15px; padding: 0px !important" scope="col">#</th>
                             <th class="text-center" style="width: 300px;" scope="col">Name</th>
                             <th class="text-center" scope="col">HSN/SAC</th>
-                            <th class="text-center wd100" scope="col">Quantity</th>
+                            <th class="text-center wd-quantity" scope="col">Quantity</th>
                             <th class="text-center" scope="col">Price</th>
                             <th class="text-cente wd100" scope="col">Disc %</th>
                             <th class="text-center wd100" scope="col">GST %</th>
@@ -259,11 +263,11 @@
                                     <ul class="list-group custom-select-border" style="position:absolute; z-index:1000; width:100%;"></ul>
                                 </div>
                                 @*<select v-if="!item.isEditName" v-bind:id="'product-sel-'+index" :data-id="index" class="product-select-2 js-example-basic-single js-states form-control"></select>
-                                <i class="fa fa-edit" style="cursor:pointer !important"></i>
-                                <input v-if="item.isEditName" type="text" v-model="item.Name" style="margin-top:5px; height:20px;" class="form-control form-control-sm">*@
+                                    <i class="fa fa-edit" style="cursor:pointer !important"></i>
+                                    <input v-if="item.isEditName" type="text" v-model="item.Name" style="margin-top:5px; height:20px;" class="form-control form-control-sm">*@
                             </td>
                             <td> <input type="text" readonly v-model="item.HSN" class="form-control form-control-sm"></td>
-                            <td class="wd100"> <input type="number" v-model="item.Quantity" v-on:keyup="calculatePerItemAmount(index)" class="form-control form-control-sm"></td>
+                            <td class="wd-quantity"> <input type="number" v-model="item.Quantity" v-on:keyup="calculatePerItemAmount(index)" class="form-control form-control-sm"></td>
                             <td> <input type="number" v-model="item.Price" v-on:keyup="calculatePerItemAmount(index)" class="form-control form-control-sm"></td>
                             <td class="wd100"> <input type="number" v-model="item.Discount" v-on:keyup="calculatePerItemAmount(index)" class="form-control form-control-sm"></td>
                             <td class="wd100"> <input type="number" v-model="item.GST" v-on:keyup="calculatePerItemAmount(index)" class="form-control form-control-sm"></td>
@@ -285,6 +289,13 @@
                                 <th class="text-center" colspan="2">Customer Information</th>
                             </tr>
                             <tr>
+                                <td colspan="2" class="text-center">
+                                    <div class="form-check-inline">
+                                        <button type="button" class="btn btn-sm btn-link" v-on:click="openModalForNewCustomer()">Add new customer for future reference?</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
                                 <th class="text-center" colspan="2">
                                     <div class="form-check form-check-inline">
                                         <input class="form-check-input" type="radio" value="isExistingCustomer" v-model="customerType">
@@ -295,7 +306,7 @@
                                     <div class="form-check-inline">
                                         <input class="form-check-input" type="radio" value="isNewCustomer" v-model="customerType">
                                         <label class="form-check-label">
-                                            Add New Customer
+                                            New Customer
                                         </label>
                                     </div>
                                 </th>
@@ -312,8 +323,22 @@
                                 <td><input type="text" customValidation="gstin" v-model="CustomerGSTIN" class="form-control form-control-sm"></td>
                             </tr>
                             <tr>
+                                <th>State: <br /> code: {{stateObj.id}}</th>
+                                <td>
+                                    <select class="form-control form-control-sm" v-model="stateObj">
+                                        <option v-for="option in validation[0].getGSTStateCode()" v-bind:value="{id:option.Code, name: option.Name}">{{ option.Name }}</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
                                 <th>Phone Number:</th>
                                 <td><input type="text" customValidation="phone" v-model="CustomerMobileNumber" class="form-control form-control-sm"></td>
+                            </tr>
+                            <tr>
+                                <th>Email Id:</th>
+                                <td>
+                                    <input cv="emailId" v-model="CustomerEmailId" class="form-control form-control-sm">
+                                </td>
                             </tr>
                             <tr>
                                 <th>Address:</th>
@@ -333,16 +358,7 @@
                                     <input v-model="DispatchReferenceName" class="form-control form-control-sm" />
                                 </td>
                             </tr>
-                            <tr v-show="customerType === 'isNewCustomer'">
-                                <td colspan="2" class="text-center">
-                                    <div class="form-check-inline">
-                                        <input class="form-check-input" type="checkbox" v-model="IsSaveNewCustomer">
-                                        <label class="form-check-label">
-                                            Save new customer for future reference?
-                                        </label>
-                                    </div>
-                                </td>
-                            </tr>
+
                         </table>
                     </div>
                     <div class="col-lg-8 col-sm-8">
@@ -428,6 +444,72 @@
         </div>
     </div>
 
+    @*Modal for add new customer*@
+    <div class="modal d-print-none" id="add-new-cusotmer-modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add new customer.</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body scroll" style="padding-left:50px;">
+                    <form>
+                        <div class="form-group row">
+                            <label class="col-md-3 col-form-label">Name</label>
+                            <div class="col-sm-6">
+                                <input v-model="customerCopy.CustomerName" cv="required" type="text" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-3 col-form-label">GSTIN</label>
+                            <div class="col-sm-6">
+                                <input v-model="customerCopy.CustomerGSTIN" type="text" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-3 col-form-label">State</label>
+                            <div class="col-sm-6">
+                                <select class="form-control" v-model="stateObj">
+                                    <option v-for="option in validation[0].getGSTStateCode()" v-bind:value="{id:option.Code, name: option.Name}">{{ option.Name }}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-3 col-form-label">State code</label>
+                            <div class="col-sm-6">
+                                <input readonly v-model="stateObj.id" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-3 col-form-label">Mobile Number</label>
+                            <div class="col-sm-6">
+                                <input cv="phonenumber" v-model="customerCopy.CustomerMobileNumber" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-3 col-form-label">Email Id</label>
+                            <div class="col-sm-6">
+                                <input cv="emailId" v-model="customerCopy.CustomerEmailId" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-3 col-form-label">Address</label>
+                            <div class="col-sm-6">
+                                <textarea v-model="customerCopy.CustomerAddress" class="form-control form-control-sm"></textarea>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success btn-sm" v-on:click="saveNewCustomerData()">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
     @*Modal for bill settings*@
     <div class="modal d-print-none" id="bill-settings-modal" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
@@ -440,8 +522,8 @@
                 </div>
                 <div class="modal-body">
                     <div class="alert alert-info" role="alert">
-                        On selecting the product at the time billing, If GST is already included in the Product price 
-                        then map the Product columns to the Billing total column or else if GST is to be included on the 
+                        On selecting the product at the time billing, If GST is already included in the Product price
+                        then map the Product columns to the Billing total column or else if GST is to be included on the
                         Product price then map the Product available columns to the Billing Price column
                     </div>
                     <table style="font-size: 0.85em; color: #6c757d !important;" class="table table-bordered table-sm">
@@ -509,6 +591,10 @@
                             <td>@Model.GSTIN</td>
                         </tr>
                         <tr>
+                            <th>State Name:</th>
+                            <td>@Model.State  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="font-weight:bolder">Code:</span> @Model.StateCode</td>
+                        </tr>
+                        <tr>
                             <th>Email:</th>
                             <td>@Model.Email</td>
                         </tr>
@@ -532,6 +618,10 @@
                         <tr>
                             <th>GSTIN/UIN:</th>
                             <td>{{CustomerGSTIN}}</td>
+                        </tr>
+                        <tr v-if="stateObj.id > 0">
+                            <th>State Name:</th>
+                            <td>{{stateObj.name}} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="font-weight:bolder">Code:</span>{{stateObj.id}}</td>
                         </tr>
                         <tr>
                             <th>Phone:</th>
@@ -712,8 +802,8 @@
         </div>
     </div>
 </div>
-    <script src="~/Scripts/NumberToWords.js"></script>
-    <script>
+<script src="~/Scripts/NumberToWords.js"></script>
+<script>
         $(document).ready(function () {
 
             var getNewItemRow = function () {
@@ -765,16 +855,29 @@
                 pad2(currentDate.getSeconds());
         }
 
-        var obj = {
+            var obj = {
+                customerCopy: {
+                    CustomerName :"",
+                    CustomerGSTIN:"",
+                    CustomerEmailId: "",
+                    CustomerAddress: "",
+                    CustomerState: "",
+                    CustomerStateCode: "",
+                    CustomerMobileNumber:""
+                },
             alertFailureMessage: "",
             alertMessage: "",
             items: items,
             isPreview: false,
             isSelect2Rendered: true,
+                stateObj: { id: -1, name: "Select state" },
             CustomerId: 0,
             CustomerName: "",
             CustomerGSTIN: "",
+            CustomerEmailId:"",
             CustomerAddress: "",
+            CustomerState: "",
+            CustomerStateCode:29,
             CustomerMobileNumber: "",
             DispatchVehicleNumber: "",
             DispatchReferenceName: "",
@@ -800,6 +903,61 @@
             el: '#app',
             data: obj,
             methods: {
+                saveNewCustomerData: function () {
+                    var self = this;
+                    var isValid = validation[0].isFormDataValid("add-new-cusotmer-modal") === 0;
+
+                    if (isValid) {
+                        var formData = {
+                            Name: self.customerCopy.CustomerName,
+                            GSTIN: self.customerCopy.CustomerGSTIN,
+                            Address: self.customerCopy.CustomerAddress,
+                            MobileNumber: self.customerCopy.CustomerMobileNumber,
+                            State: self.stateObj.name,
+                            StateCode: self.stateObj.id,
+                            Email: self.customerCopy.CustomerEmailId,
+                            Type: "Customer"
+                        };
+
+                        // copy modal customer data to table data;
+                        self.CustomerName = self.customerCopy.CustomerName;
+                        self.CustomerGSTIN = self.customerCopy.CustomerGSTIN;
+                        self.CustomerAddress = self.customerCopy.CustomerAddress;
+                        self.CustomerMobileNumber = self.customerCopy.CustomerMobileNumber;
+                        self.CustomerEmailId = self.customerCopy.CustomerEmailId;
+
+                        $.ajax({
+                            type: 'POST',
+                            url: '@Url.Action("AddSingle", "contact")',
+                            data: JSON.stringify(formData),
+                            dataType: 'json',
+                            contentType: 'application/json; charset=utf-8',
+                            success: function (res) {
+                                if (res.Id) {
+                                    $("#add-new-cusotmer-modal").modal("hide");
+                                    //settings customer select2 value
+                                    self.customerType = "isExistingCustomer";
+                                    var optionId = "-" + res.Id;
+                                    var option = new Option(self.CustomerName, optionId);
+                                    $(".customer-select-2").append(option).trigger('change');
+                                    $(".customer-select-2").val(optionId).trigger('change');
+                                    self.CustomerId = res.Id;
+                                    self.alertMessage =
+                                        `contact Added succesfully.`;
+                                }
+                            }
+                        });
+                    }
+                },
+                openModalForNewCustomer: function () {
+                    var self = this;
+                    self.customerCopy.CustomerName = "";
+                    self.customerCopy.CustomerGSTIN = "";
+                    self.customerCopy.CustomerAddress = "";
+                    self.customerCopy.CustomerMobileNumber = "";
+                    self.customerCopy.CustomerEmailId = "";
+                    $("#add-new-cusotmer-modal").modal({ backdrop: 'static', keyboard: false, show: true });
+                },
                 deleteBillRow: function (index) {
                     var isconf = confirm("Are you sure you want to remove the item from the bill ?");
                     if (isconf === true) {
@@ -871,7 +1029,7 @@
                     this.isPreview = true;
                     var conf = confirm("Are you sure you want to Print the bill? If you click OK the bill will be saved");
                     if (conf === true) {
-                        
+
                         this.afterPrint();
                         setTimeout(function () {
                             window.print();
@@ -984,6 +1142,9 @@
                                         GSTIN: customer.GSTIN,
                                         Address: customer.Address,
                                         MobileNumber: customer.MobileNumber,
+                                        Email: customer.Email,
+                                        State: customer.State,
+                                        StateCode : customer.StateCode
                                     });
                                 });
 
@@ -1006,6 +1167,8 @@
                             self.CustomerAddress = data.Address;
                             self.CustomerMobileNumber = data.MobileNumber;
                             self.CustomerGSTIN = data.GSTIN;
+                            self.CustomerEmailId = data.Email;
+                            self.stateObj = { id: data.StateCode, name: data.State }
                         });
 
                     var obj = {
@@ -1036,7 +1199,7 @@
 
                     selectSearchEvent(obj);
 
-                   
+
                 },
                 prefillSelect2Data: function (count) {
                     var self = this;
@@ -1126,10 +1289,11 @@
                     $.get(`/Sale/GetDataById/${id}`,
                         function (data) {
                             self.CustomerAddress = data.Customer.Address,
-                                self.CustomerMobileNumber = data.Customer.MobileNumber,
+                               self.CustomerMobileNumber = data.Customer.MobileNumber,
                                 self.DispatchVehicleNumber = data.SaleDetail.DispatchVehicleNumber,
                                 self.DispatchReferenceName = data.SaleDetail.DispatchReferenceName,
                                 self.CustomerName = data.Customer.Name;
+                            self.stateObj = { id: data.Customer.StateCode, name: data.Customer.State };
                             self.CustomerGSTIN = data.Customer.GSTIN;
                             self.CustomerId = data.Customer.Id;
                             self.TotalCGSTAmount = self.tax / 2;
@@ -1166,7 +1330,6 @@
                                     self.items[index].HSN = data.HSN;
                                     self.items[index].MeasuringUnit = data.MeasuringUnit;
                                 });
-                                self.prefillSelect2Data(data.SaleItems.length);
                                 self.getEmptyProductCount();
                             };
                         });
@@ -1181,6 +1344,6 @@
             }
         });
     });
-    </script>
-    <script src="~/Scripts/customValidation.js"></script>
+</script>
+<script src="~/Scripts/customValidation.js"></script>
 

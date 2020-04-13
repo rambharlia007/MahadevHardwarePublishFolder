@@ -98,7 +98,7 @@
                        class="table text-secondary" style="font-size:14px;">
                     <thead class="thead-light">
                         <tr>
-                            <th style="min-width:150px">Name</th>
+                            <th style="width:300px">Name</th>
                             <th>HSN/SAC</th>
                             <th>PER</th>
                             <th>Quantity Available</th>
@@ -485,10 +485,10 @@
                         ajax: {
                             url: "/item/GetData",
                             type: "GET",
-                            dataSrc: function(json) {
+                            dataSrc: function (json) {
                                 return json;
                             },
-                            error: function(xhr, error) {
+                            error: function (xhr, error) {
                                 if (xhr.status === 401) alert("Unauthorised user");
                             }
                         },
@@ -521,7 +521,7 @@
                             }
                         ],
                         lengthMenu: [[50], [50]],
-                        initComplete: function(settings, json) {
+                        initComplete: function (settings, json) {
                             //self.bindTableClickEvents();
                             self.hideStockCountColumns();
                         }

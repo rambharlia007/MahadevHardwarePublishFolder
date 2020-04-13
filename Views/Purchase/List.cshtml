@@ -8,6 +8,9 @@
         cursor: pointer;
     }
 
+    .select2-selection{
+        width:200px !important
+    }
     .grid-edit {
         text-decoration: underline;
         color: #158cba;
@@ -173,6 +176,48 @@
             </div>
         </div>
 
+
+
+        @*Modal for add new distributor*@
+        <div class="modal d-print-none" id="add-new-cusotmer-modal" tabindex="-1" style="z-index:2000 !important" role="dialog">
+            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Add new Distributor.</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body scroll" style="padding-left:50px;">
+                        <form>
+                            <div class="form-group row">
+                                <label class="col-md-3 col-form-label">Name</label>
+                                <div class="col-sm-6">
+                                    <input v-model="distributor.Name" cv="required" type="text" class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-md-3 col-form-label">GSTIN</label>
+                                <div class="col-sm-6">
+                                    <input v-model="distributor.GSTIN" type="text" class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-md-3 col-form-label">Mobile Number</label>
+                                <div class="col-sm-6">
+                                    <input cv="phonenumber" v-model="distributor.MobileNumber" class="form-control">
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-success btn-sm" v-on:click="saveNewDistributorData()">Save</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
         <!-- The Modal -->
         <div class="modal" id="edit-purchase-modal">
             <div class="modal-dialog modal-dialog-centered modal-lg">
@@ -196,7 +241,9 @@
                                         <tr>
                                             <th class="text-center" style="width: 140px">Date</th>
                                             <th class="text-center" style="width: 150px;">Invoice</th>
-                                            <th class="text-center" style="width: 150px;">Distributor</th>
+                                            <th class="text-center" style="width: 220px;">
+                                                Distributor
+                                            </th>
                                             <th class="text-center" style="width: 150px;">Dist. GSTIN</th>
                                             <th class="text-center">SGST Amount</th>
                                             <th class="text-center">CGST Amount</th>
@@ -282,8 +329,10 @@
                                             <tr>
                                                 <th class="text-center" style="width: 140px">Date</th>
                                                 <th class="text-center" style="width: 150px;">Invoice</th>
-                                                <th class="text-center" style="width: 150px;">Distributor</th>
-                                                <th class="text-center" style="width: 150px;">Dist. GSTIN</th>
+                                                <th class="text-center" style="width: 220px;">
+                                                    Distributor
+                                                </th>
+                                                <th class="text-center" style="width: 160px;">Dist. GSTIN</th>
                                                 <th class="text-center">SGST Amount</th>
                                                 <th class="text-center">CGST Amount</th>
                                                 <th class="text-center">Sub Amount</th>
@@ -292,8 +341,11 @@
                                             <tr>
                                                 <td style="width: 140px" v-bind:["data-id"]="index"> <input type="text" cv="date" v-model="purchase.Date" class="form-control form-control-sm purchase-date"></td>
                                                 <td style="width: 150px;"> <input type="text" cv="required" v-model="purchase.Invoice" class="form-control form-control-sm"></td>
-                                                <td style="width: 150px;"> <select v-bind:id="'dist-sel-'+index" :data-id="index" class="dist-select-2 js-example-basic-single js-states form-control"></select> </td>
-                                                <td style="width: 150px;"> <input type="text" cv="gstin" v-model="purchase.DistributorGSTIN" class="form-control form-control-sm"></td>
+                                                <td style="width: 220px;">
+                                                    <select v-bind:id="'dist-sel-'+index" :data-id="index" class="dist-select-2 js-example-basic-single js-states form-control"></select>
+                                                    <button type="button" class="btn btn-sm btn-link" v-on:click="openModalForNewDistributor(index)">Add new Distributor?</button>
+                                                </td>
+                                                <td style="width: 160px;"> <input type="text" cv="gstin" v-model="purchase.DistributorGSTIN" class="form-control form-control-sm"></td>
                                                 <td> <input type="number" readonly v-model="purchase.TotalCGSTAmount" class="form-control form-control-sm"></td>
                                                 <td> <input type="number" readonly v-model="purchase.TotalSGSTAmount" class="form-control form-control-sm"></td>
                                                 <td> <input type="number" cv="required" v-model="purchase.SubAmount" v-on:keyup="calculateTotalAmount(index)" class="form-control form-control-sm"></td>
@@ -405,13 +457,53 @@
             tableRef: null,
             fromDate: GetDateRange().startDate,
             toDate: GetDateRange().endDate,
-            footerTotal: {}
+            footerTotal: {},
+            distributor: {
+                Name: "",
+                GSTIN: "",
+                MobileNumber: "",
+                Type: "Vendor"
+            },
+            indexForDistributorAdd: ""
         }
 
         new Vue({
             el: '#app',
             data: obj,
             methods: {
+                openModalForNewDistributor: function (index) {
+                    this.indexForDistributorAdd = index;
+                    $("#add-new-cusotmer-modal").modal({ backdrop: 'static', keyboard: false, show: true });
+                },
+                saveNewDistributorData: function (index) {
+                     var self = this;
+                    var isValid = validation[0].isFormDataValid("add-new-cusotmer-modal") === 0;
+
+                    if (isValid) {
+                        $.ajax({
+                            type: 'POST',
+                            url: '@Url.Action("AddSingle", "contact")',
+                            data: JSON.stringify(self.distributor),
+                            dataType: 'json',
+                            contentType: 'application/json; charset=utf-8',
+                            success: function (res) {
+                                if (res.Id) {
+                                    $("#add-new-cusotmer-modal").modal("hide");
+                                    //settings customer select2 value
+                                    self.customerType = "isExistingCustomer";
+                                    var optionId = "-" + res.Id;
+                                    var option = new Option(self.distributor.Name, optionId);
+
+                                    var ele = $(".dist-select-2");
+                                    var curr = $(ele[self.indexForDistributorAdd]);
+                                    curr.append(option).trigger('change');
+                                    curr.val(optionId).trigger('change');
+                                    alert("Distributor added successfully.")
+                                }
+                            }
+                        });
+                    }
+                },
                 addEmptyPurchase: function () {
                     var self = this;
                     var emptyObj = addEmptyPurchaseObject()[0]
