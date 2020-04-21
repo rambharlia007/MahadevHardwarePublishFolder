@@ -18,11 +18,15 @@
         .header {
             border-bottom: 2px solid #343a405e;
         }
-
-        .nav-bg {
-            background-color: #1f6b8a;
+        .blur-bg {
+            opacity: 0.5;
         }
-
+        .nav-bg {
+            background-color: #043346;
+        }
+        .hide {
+            display: none
+        }
         tr:hover .show-on-hover {
             visibility: visible;
         }
@@ -39,6 +43,20 @@
         .dataTable tbody tr:hover {
             background-color: #eee;
             cursor: pointer;
+        }
+        .dataTable tbody tr {
+            height:30px !important;
+        }
+        .dataTable tbody td {
+            padding:5px !important;
+        }
+        dataTables_scrollBody
+        .dataTables_scrollBody .dataTable thead th {
+            padding: 0px !important;
+        }
+
+        .dataTables_scrollBody .dataTable thead tr {
+            height: 0px !important;
         }
 
         .custom-options {
@@ -62,6 +80,13 @@
             background-color: #eee;
             border:none;
             /* border: 1px solid rgba(0, 0, 0, 0.125); */
+        }
+
+        .global-spinner {
+            right: 600px;
+            top: 250px;
+            position: absolute !important;
+            z-index: 10000;
         }
 
         textarea:focus,
@@ -257,9 +282,14 @@
     </nav>
 
     @*@Html.Partial("~/Views/Shared/ConfirmationModal.cshtml")*@
+    <div class="global-spinner fa-5x" style="color:#043346 !important">
+        <i class="fa fa-spinner fa-spin fa-pulse"></i>
+    </div>
     <div class="body-content body-container">
+
         @RenderBody()
         @Scripts.Render("~/bundles/validation")
+        <script src="~/Scripts/customAjaxHandler.js"></script> 
         <hr class="d-print-none" />
         <footer class="d-print-none footer-container">
             <p>&copy; @DateTime.Now.Year - Product by Ram Bharlia</p>

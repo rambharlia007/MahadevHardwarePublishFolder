@@ -18,7 +18,7 @@
         padding: 5px !important
     }
 
-    li:hover {
+    .custom-select-border li:hover {
         z-index: 2;
         color: #fff;
         background-color: #007bff;
@@ -908,6 +908,7 @@
                     var isValid = validation[0].isFormDataValid("add-new-cusotmer-modal") === 0;
 
                     if (isValid) {
+                        showLoader();
                         var formData = {
                             Name: self.customerCopy.CustomerName,
                             GSTIN: self.customerCopy.CustomerGSTIN,
@@ -944,6 +945,7 @@
                                     self.CustomerId = res.Id;
                                     self.alertMessage =
                                         `contact Added succesfully.`;
+                                    hideLoader();
                                 }
                             }
                         });

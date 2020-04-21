@@ -481,7 +481,7 @@
                     var self = this;
                     self.tableRef = $("#product-table").DataTable({
                         "lengthChange": false,
-                        "scrollY": "180px",
+                        "scrollY": "250px",
                         ajax: {
                             url: "/item/GetData",
                             type: "GET",
@@ -496,6 +496,8 @@
                             header: true,
                             footer: true
                         },
+                        columnDefs: [
+                            { "width": "300px", "targets": 0 }],
                         columns: [
                             { data: "Name" },
                             {
