@@ -5,9 +5,6 @@
 @model MahadevHWBillingApp.Models.Profile
 @*<link href="~/Content/paper.css" rel="stylesheet" />*@
 <style>
-
-
-
     .bill-grid td {
         vertical-align: middle !important;
         padding: 5px !important
@@ -87,7 +84,9 @@
     .A4w400 {
         width: 550px;
     }
-
+    .A5w400{
+        width:425px;
+    }
     .wd100 {
         width: 55px;
     }
@@ -121,6 +120,7 @@
     }
 
     @@media print {
+
         /*.border {
             border: 3px solid black !important;
         }*/
@@ -140,53 +140,68 @@
             border-left: 2px solid black !important;
         }
 
-        #print-bill div {
+        #print-bill div, #print-bill-a5 div {
             font-weight: bold !important;
         }
 
-        #print-bill tr {
+        #print-bill tr, #print-bill-a5 tr {
             max-height: 25px !important;
         }
 
-        #print-bill td {
+        #print-bill td, #print-bill-a5 td {
             padding-bottom: 0px !important;
         }
 
-        #print-bill span {
+        #print-bill span, #print-bill-a5 span {
             font-weight: bold !important;
         }
 
-        #print-bill td {
+        #print-bill-a5 {
+            font-size:1.3em !important;
+        }
+        #print-bill td, #print-bill-a5 td {
+            padding-bottom: 0px !important;
+            padding-right: 0px !important;
             font-weight: bold !important;
         }
 
-        #print-bill th {
+        #print-bill th, #print-bill-a5 th {
+            padding-bottom: 0px !important;
+            padding-right: 0px !important;
             font-weight: bolder !important;
         }
     }
 
-    #print-bill div {
+    #print-bill div, #print-bill-a5 div {
         font-weight: bold !important;
     }
 
-    #print-bill tr {
+    #print-bill tr, #print-bill-a5 tr {
         max-height: 25px !important;
     }
 
-    #print-bill td {
+    #print-bill td, #print-bill-a5 td {
         padding-bottom: 0px !important;
     }
 
-    #print-bill span {
+    #print-bill span, #print-bill-a5 span {
         font-weight: bold !important;
     }
 
-    #print-bill td {
+    #print-bill td, #print-bill-a5 td {
+        padding-bottom: 0px !important;
+        padding-right: 0px !important;
         font-weight: bold !important;
     }
 
-    #print-bill th {
+    #print-bill th, #print-bill-a5 th {
+        padding-bottom: 0px !important;
+        padding-right: 0px !important;
         font-weight: bolder !important;
+    }
+
+    #print-bill .card-header, #print-bill-a5 .card-header {
+        color:black !important
     }
 
     @@page {
@@ -207,14 +222,24 @@
             <h4 style="padding-left: 15px;">Billing</h4>
         </div>
         <div class="col-md-4">
-            <button style="margin-top:25px; float:right;" type="button" class="btn btn-success btn-sm" v-if="!isPreview" v-on:click="showOrHidePreview(true)">Print Preview</button>
+            <div class="dropdown" style="margin-top:25px; float:right;" v-if="isPrintOnly || !isPreview">
+                <a class="btn btn-success btn-sm dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">
+                    Print Preview
+                </a>
+
+                <div class="dropdown-menu pointer" aria-labelledby="dropdownMenuLink">
+                    <a class="dropdown-item" v-on:click="showOrHidePreview(true, false)">A4-Page</a>
+                    <a class="dropdown-item" v-on:click="showOrHidePreview(true, true)">A5-Page</a>
+                </div>
+            </div>
             <button style="margin-top:25px; margin-right:10px; float:right;" type="button" class="btn btn-success btn-sm" v-if="!isPreview" v-on:click="openBillSettingsModal()">
                 Bill settings
                 <i class="fa fa-cog" data-toggle="tooltip" title="Map Product sell price to bill column price or total"></i>
             </button>
             <button style="margin-top:25px; float:right;  margin-right:10px;" type="button" class="btn btn-success btn-sm" v-if="isPreview && !isPrintOnly" v-on:click="showOrHidePreview(false)">Edit Bill</button>
             @*<button style="margin-top:25px; float:right;  margin-right:10px;" type="button" class="btn btn-success btn-sm" v-if="isPreview" v-on:click="print(1)">Print (A4 Half sheet)</button>*@
-            <button style="margin-top:25px; float:right;  margin-right:10px;" type="button" class="btn btn-success btn-sm" v-if="isPreview" v-on:click="print(2)">Print (A4 Full sheet)</button>
+
+            <button style="margin-top:25px; float:right;  margin-right:10px;" type="button" class="btn btn-success btn-sm" v-if="isPreview" v-on:click="print(2)">Print</button>
             @*<button style="margin-top:25px; float:right;  margin-right:10px;" type="button" class="btn btn-success btn-sm" v-if="!isPrintOnly" v-on:click="save()">Save</button>*@
         </div>
     </div>
@@ -571,107 +596,342 @@
         </div>
     </div>
 
-    <div id="print-bill" class="card" v-show="isPreview" style="border:none; margin-left:10px !important; margin-right:10px !important">
-        <div class="card-header text-center" style="border:none">
-            <strong class="text-center">Tax Invoice</strong>
-            <span class="pull-right">(ORIGINAL FOR RECIPIENT)</span>
-        </div>
-        <div class="card-body pt-0">
-            <div class="row">
-                <div class="col-sm-4 border-right border-top border-left border-bottom A4pb">
-                    <table style="width:100%" class="table-borderless">
-                        <tr>
-                            <th colspan=2>@Model.BusinessName</th>
-                        </tr>
-                        <tr>
-                            <th colspan=2>@Model.Address</th>
-                        </tr>
-                        <tr>
-                            <th>GSTIN/UIN:</th>
-                            <td>@Model.GSTIN</td>
-                        </tr>
-                        <tr>
-                            <th>State Name:</th>
-                            <td>@Model.State  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="font-weight:bolder">Code:</span> @Model.StateCode</td>
-                        </tr>
-                        <tr>
-                            <th>Email:</th>
-                            <td>@Model.Email</td>
-                        </tr>
-                        <tr>
-                            <th>Phone:</th>
-                            <td>@Model.MobileNumber</td>
-                        </tr>
-                    </table>
-                </div>
-                <div class="col-sm-4 border-right border-top border-bottom">
-                    <table style="width: 100%" class="table-borderless">
-                        <tr>
-                            <td colspan=2>Buyer</td>
-                        </tr>
-                        <tr>
-                            <th colspan=2>{{CustomerName}}</th>
-                        </tr>
-                        <tr>
-                            <th colspan=2>{{CustomerAddress}}</th>
-                        </tr>
-                        <tr>
-                            <th>GSTIN/UIN:</th>
-                            <td>{{CustomerGSTIN}}</td>
-                        </tr>
-                        <tr v-if="stateObj.id > 0">
-                            <th>State Name:</th>
-                            <td>{{stateObj.name}} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="font-weight:bolder">Code:</span>{{stateObj.id}}</td>
-                        </tr>
-                        <tr>
-                            <th>Phone:</th>
-                            <td>{{CustomerMobileNumber}}</td>
-                        </tr>
-                    </table>
-                </div>
-                <div class="col-sm-4 border-bottom border-right border-top">
-                    <table style="width:100%" class="table-borderless">
-                        <tr>
-                            <th>Date:</th>
-                            <td>{{Date}}</td>
-                        </tr>
-                        <tr>
-                            <th>Invoice:</th>
-                            <td>{{Invoice}}</td>
-                        </tr>
-                        <tr>
-                            <th>Dispatched Vehicle No.</th>
-                            <td>
-                                {{DispatchVehicleNumber}}
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>Dispatched Reference(s):</th>
-                            <td>
-                                {{DispatchReferenceName}}
-                            </td>
-                        </tr>
-                    </table>
+    @*print A5 page*@
+    <div style="border:none; margin-left:5px !important; margin-right:5px !important" v-show="isPreview && isA5">
+        <div id="print-bill-a5" class="card" style="border:none;">
+            <div class="card-header text-center" style="border:none">
+                <strong class="text-center">Tax Invoice</strong>
+                <span class="pull-right">(ORIGINAL FOR RECIPIENT)</span>
+            </div>
+            <div class="card-body pt-0">
+                <div class="row">
+                    <div class="col-sm-8 border-right border-top border-left border-bottom">
+                        <div class="row border-bottom" style="padding-bottom:10px !important">
+                            <div class="col-sm-12">
+                                <table style="width:100%" class="table-borderless">
+                                    <tr>
+                                        <th colspan=2>@Model.BusinessName</th>
+                                    </tr>
+                                    <tr>
+                                        <th colspan=2>@Model.Address</th>
+                                    </tr>
+                                    <tr>
+                                        <th>GSTIN/UIN:</th>
+                                        <td>@Model.GSTIN</td>
+                                    </tr>
+                                    <tr>
+                                        <th>State Name:</th>
+                                        <td>@Model.State  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="font-weight:bolder">Code:</span> @Model.StateCode</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Email:</th>
+                                        <td>@Model.Email</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Phone:</th>
+                                        <td>@Model.MobileNumber</td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="row" style="padding-bottom:10px !important">
+                            <div class="col-sm-12">
+                                <table style="width: 100%" class="table-borderless">
+                                    <tr>
+                                        <td colspan=2>Buyer</td>
+                                    </tr>
+                                    <tr>
+                                        <th colspan=2>{{CustomerName}}</th>
+                                    </tr>
+                                    <tr>
+                                        <th colspan=2>{{CustomerAddress}}</th>
+                                    </tr>
+                                    <tr>
+                                        <th>GSTIN/UIN:</th>
+                                        <td>{{CustomerGSTIN}}</td>
+                                    </tr>
+                                    <tr v-if="stateObj.id > 0">
+                                        <th>State Name:</th>
+                                        <td>{{stateObj.name}} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="font-weight:bolder">Code:</span>{{stateObj.id}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Phone:</th>
+                                        <td>{{CustomerMobileNumber}}</td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-4 border-bottom border-right border-top table-responsive-sm">
+                        <table style="width:100%" class="table-borderless">
+                            <tr>
+                                <th>Date:</th>
+                                <td>{{Date}}</td>
+                            </tr>
+                            <tr>
+                                <th>Invoice:</th>
+                                <td>{{Invoice}}</td>
+                            </tr>
+                            <tr>
+                                <th>Dispatched Vehicle No.</th>
+                                <td>
+                                    {{DispatchVehicleNumber}}
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Dispatched Reference(s):</th>
+                                <td>
+                                    {{DispatchReferenceName}}
+                                </td>
+                            </tr>
+                        </table>
 
-                </div>
-                <div class="col-md-12 pr-0 pl-0">
-                    <div class="table-responsive-sm">
-                        <table class="table table-custom table-borderless table-sm mb-0 A4h">
-                            <thead>
-                                <tr style="height:23px;">
-                                    <th class="border-right border-bottom border-left text-center A4w45" scope="col">#</th>
-                                    <th class="border-right border-bottom text-center A4w400" scope="col">Description of Goods</th>
-                                    <th class="border-right border-bottom text-center" scope="col">HSN/SAC</th>
-                                    <th class="border-right border-bottom text-center" scope="col">GST Rate</th>
-                                    <th class="border-right border-bottom text-center" scope="col">Quantity</th>
-                                    <th class="border-right border-bottom text-center" scope="col">Rate</th>
-                                    <th class="border-right border-bottom text-center" scope="col">per</th>
-                                    <th class="border-right border-bottom text-center" scope="col">Disc %</th>
-                                    <th class="border-bottom text-center border-right" scope="col">Amount</th>
+                    </div>
+                    <div class="col-md-12 pr-0 pl-0">
+                        <div class="table-responsive-sm">
+                            <table style="width:100%" class="table-borderless">
+                                <tr style="height:27px;">
+                                    <th class="border-right border-bottom border-left text-center A4w45">#</th>
+                                    <th class="border-right border-bottom text-center A5w400">Description of Goods</th>
+                                    <th class="border-right border-bottom text-center">HSN/SAC</th>
+                                    <th class="border-right border-bottom text-center">GST Rate</th>
+                                    <th class="border-right border-bottom text-center">Quantity</th>
+                                    <th class="border-right border-bottom text-center">Rate</th>
+                                    @*<th class="border-right border-bottom text-center">per</th>*@
+                                    <th class="border-right border-bottom text-center">Disc %</th>
+                                    <th class="border-bottom text-center border-right">Amount</th>
                                 </tr>
-                            </thead>
-                            <tbody>
-                                <tr v-for="(item,index) in items" v-if="item.Name" style="height:23px;">
+                                <tr v-for="(item,index) in items" v-if="item.Name" style="height:27px;">
+                                    <td class="text-center border-left border-right A4w45">{{index+1}}</td>
+                                    <td class="left strong border-right A5w400" style="padding-left:10px !important;"><strong>{{item.Name}}</strong></td>
+                                    <td class="border-right text-center">{{item.HSN}}</td>
+                                    <td class="text-center border-right">{{displayFormat(item.GST, true)}}</td>
+                                    <td class="border-right text-center">{{item.Quantity}} {{item.MeasuringUnit}}</td>
+                                    <td class="border-right text-center">{{displayFormat(item.Price)}}</td>
+                                    @*<td class="border-right text-center">{{item.MeasuringUnit}}</td>*@
+                                    <td class="border-right text-center">{{displayFormat(item.Discount, true)}}</td>
+                                    <td class="text-right text-center border-right">{{displayFormat(item.SubTotal)}}</td>
+                                </tr>
+                                <tr style="height:27px;">
+                                    <td class="border-right border-left"></td>
+                                    <td class="border-right"></td>
+                                    <td class="border-right"></td>
+                                    <td class="border-right"></td>
+                                    <td class="border-right"></td>
+                                    <td class="border-right"></td>
+                                    @*<td class="border-right"></td>*@
+                                    <td class="border-right"></td>
+                                    <td class="text-center border-right border-top"><strong>{{displayFormat(subTotal)}}</strong></td>
+                                </tr>
+                                <template v-for="(value, propertyName) in taxSlot">
+                                    <tr style="height:27px;">
+                                        <td class="center border-left border-right"></td>
+                                        <td class="text-center border-right">
+                                            <strong>Output &nbsp; SGST@@{{propertyName}}%</strong>
+                                        </td>
+                                        <td class="border-right"></td>
+                                        <td class="border-right"></td>
+                                        <td class="border-right"></td>
+                                        <td class="border-right"></td>
+                                        @*<td class="border-right"></td>*@
+                                        <td class="border-right"></td>
+                                        <td class="text-center border-right">{{displayFormat(value)}}</td>
+                                    </tr>
+                                    <tr style="height:27px;">
+                                        <td class="center border-left border-right"></td>
+                                        <td class="text-center border-right">
+                                            <strong>Output &nbsp; CGST@@{{propertyName}}%</strong>
+                                        </td>
+                                        <td class="border-right"></td>
+                                        <td class="border-right"></td>
+                                        <td class="border-right"></td>
+                                        <td class="border-right"></td>
+                                        @*<td class="border-right"></td>*@
+                                        <td class="border-right"></td>
+                                        <td class="text-center border-right">{{displayFormat(value)}}</td>
+                                    </tr>
+                                </template>
+                                <tr style="height:27px;">
+                                    <td class="center border-left border-right"></td>
+                                    <td class="text-center border-right">
+                                        <strong>Round Off</strong>
+                                    </td>
+                                    <td class="border-right"></td>
+                                    <td class="border-right"></td>
+                                    <td class="border-right"></td>
+                                    <td class="border-right"></td>
+                                    @*<td class="border-right"></td>*@
+                                    <td class="border-right"></td>
+                                    <td class="text-center border-right">{{displayFormat(RoundOff)}}</td>
+                                </tr>
+                                <tr v-for="(data) in emptyProductCount" style="height:27px;">
+                                    <td class="text-center border-left border-right A4w45"></td>
+                                    <td class="left strong border-right A5w400" style="padding-left:10px !important;"></td>
+                                    <td class="border-right text-center"></td>
+                                    <td class="text-center border-right"></td>
+                                    <td class="border-right text-center"></td>
+                                    <td class="border-right text-center"></td>
+                                    @*<td class="border-right text-center"></td>*@
+                                    <td class="border-right text-center"></td>
+                                    <td class="text-right text-center border-right"></td>
+                                </tr>
+                                <tr style="height:27px;">
+                                    <td class="center border-left border-right border-top border-bottom"></td>
+                                    <td class="text-center border-right border-top border-bottom">
+                                        <strong>Total</strong>
+                                    </td>
+                                    <td class="border-right border-top border-bottom"></td>
+                                    <td class="border-right border-top border-bottom"></td>
+                                    <td class="text-center border-right border-top border-bottom">
+                                        <strong>
+                                            {{TotalQuantity}} 
+                                        </strong>
+                                    </td>
+                                    <td class="border-right border-top border-bottom"></td>
+                                    <td class="border-right border-top border-bottom"></td>
+                                    @*<td class="border-right border-top border-bottom"></td>*@
+                                    <td class="text-center border-top border-bottom border-right">
+                                        <strong>
+                                            <i class="fa fa-inr"></i>
+                                            {{displayFormat(total)}}
+                                        </strong>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="col-md-12 pt-2 pb-2 border-left border-bottom border-right border-bottom">
+                        <span>
+                            Amount (in words) &nbsp;
+                            <strong>
+                                <i class="fa fa-inr"></i>
+                                {{TotalInWords}} Only
+                            </strong>
+                        </span>
+                    </div>
+                    <div class="col-md-6 col-sm-6 border-left border-bottom">
+                        <div><strong>Declaration</strong></div>
+                        <div>
+                            We declare that this Invoice shows the actual price of the goods
+                            described and that all particulars are true and correct
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-6 border-right border-bottom">
+                        <div><strong class="pull-right">for @Model.BusinessName</strong></div>
+                        <div style="padding-top: 35px;">
+                            <span class="pull-right">
+                                Authorised Signatory
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 offset-4">
+                    This is a Computer Generated Invoice.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @*print A4 page*@
+    <div style="border:none; margin-left:10px !important; margin-right:10px !important" v-show="isPreview && !isA5">
+        <div id="print-bill" class="card" style="border:none;">
+            <div class="card-header text-center" style="border:none">
+                <strong class="text-center">Tax Invoice</strong>
+                <span class="pull-right">(ORIGINAL FOR RECIPIENT)</span>
+            </div>
+            <div class="card-body pt-0">
+                <div class="row">
+                    <div class="col-sm-4 border-right border-top border-left border-bottom A4pb">
+                        <table style="width:100%" class="table-borderless">
+                            <tr>
+                                <th colspan=2>@Model.BusinessName</th>
+                            </tr>
+                            <tr>
+                                <th colspan=2>@Model.Address</th>
+                            </tr>
+                            <tr>
+                                <th>GSTIN/UIN:</th>
+                                <td>@Model.GSTIN</td>
+                            </tr>
+                            <tr>
+                                <th>State Name:</th>
+                                <td>@Model.State  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="font-weight:bolder">Code:</span> @Model.StateCode</td>
+                            </tr>
+                            <tr>
+                                <th>Email:</th>
+                                <td>@Model.Email</td>
+                            </tr>
+                            <tr>
+                                <th>Phone:</th>
+                                <td>@Model.MobileNumber</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="col-sm-4 border-right border-top border-bottom">
+                        <table style="width: 100%" class="table-borderless">
+                            <tr>
+                                <td colspan=2>Buyer</td>
+                            </tr>
+                            <tr>
+                                <th colspan=2>{{CustomerName}}</th>
+                            </tr>
+                            <tr>
+                                <th colspan=2>{{CustomerAddress}}</th>
+                            </tr>
+                            <tr>
+                                <th>GSTIN/UIN:</th>
+                                <td>{{CustomerGSTIN}}</td>
+                            </tr>
+                            <tr v-if="stateObj.id > 0">
+                                <th>State Name:</th>
+                                <td>{{stateObj.name}} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="font-weight:bolder">Code:</span>{{stateObj.id}}</td>
+                            </tr>
+                            <tr>
+                                <th>Phone:</th>
+                                <td>{{CustomerMobileNumber}}</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="col-sm-4 border-bottom border-right border-top">
+                        <table style="width:100%" class="table-borderless">
+                            <tr>
+                                <th>Date:</th>
+                                <td>{{Date}}</td>
+                            </tr>
+                            <tr>
+                                <th>Invoice:</th>
+                                <td>{{Invoice}}</td>
+                            </tr>
+                            <tr>
+                                <th>Dispatched Vehicle No.</th>
+                                <td>
+                                    {{DispatchVehicleNumber}}
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Dispatched Reference(s):</th>
+                                <td>
+                                    {{DispatchReferenceName}}
+                                </td>
+                            </tr>
+                        </table>
+
+                    </div>
+                    <div class="col-md-12 pr-0 pl-0">
+                        <div class="table-responsive-sm">
+                            <table style="width:100%" class="table-borderless">
+                                <tr style="height:27px;">
+                                    <th class="border-right border-bottom border-left text-center A4w45">#</th>
+                                    <th class="border-right border-bottom text-center A4w400">Description of Goods</th>
+                                    <th class="border-right border-bottom text-center">HSN/SAC</th>
+                                    <th class="border-right border-bottom text-center">GST Rate</th>
+                                    <th class="border-right border-bottom text-center">Quantity</th>
+                                    <th class="border-right border-bottom text-center">Rate</th>
+                                    <th class="border-right border-bottom text-center">per</th>
+                                    <th class="border-right border-bottom text-center">Disc %</th>
+                                    <th class="border-bottom text-center border-right">Amount</th>
+                                </tr>
+                                <tr v-for="(item,index) in items" v-if="item.Name" style="height:27px;">
                                     <td class="text-center border-left border-right A4w45">{{index+1}}</td>
                                     <td class="left strong border-right A4w400" style="padding-left:10px !important;">{{item.Name}}</td>
                                     <td class="border-right text-center">{{item.HSN}}</td>
@@ -682,7 +942,7 @@
                                     <td class="border-right text-center">{{displayFormat(item.Discount, true)}}</td>
                                     <td class="text-right text-center border-right">{{displayFormat(item.SubTotal)}}</td>
                                 </tr>
-                                <tr style="height:23px;">
+                                <tr style="height:27px;">
                                     <td class="border-right border-left"></td>
                                     <td class="border-right"></td>
                                     <td class="border-right"></td>
@@ -694,7 +954,7 @@
                                     <td class="text-center border-right border-top"><strong>{{displayFormat(subTotal)}}</strong></td>
                                 </tr>
                                 <template v-for="(value, propertyName) in taxSlot">
-                                    <tr style="height:23px;">
+                                    <tr style="height:27px;">
                                         <td class="center border-left border-right"></td>
                                         <td class="text-center border-right">
                                             <strong>Output &nbsp; SGST@@{{propertyName}}%</strong>
@@ -707,7 +967,7 @@
                                         <td class="border-right"></td>
                                         <td class="text-center border-right">{{displayFormat(value)}}</td>
                                     </tr>
-                                    <tr style="height:23px;">
+                                    <tr style="height:27px;">
                                         <td class="center border-left border-right"></td>
                                         <td class="text-center border-right">
                                             <strong>Output &nbsp; CGST@@{{propertyName}}%</strong>
@@ -721,7 +981,7 @@
                                         <td class="text-center border-right">{{displayFormat(value)}}</td>
                                     </tr>
                                 </template>
-                                <tr style="height:23px;">
+                                <tr style="height:27px;">
                                     <td class="center border-left border-right"></td>
                                     <td class="text-center border-right">
                                         <strong>Round Off</strong>
@@ -734,7 +994,7 @@
                                     <td class="border-right"></td>
                                     <td class="text-center border-right">{{displayFormat(RoundOff)}}</td>
                                 </tr>
-                                <tr v-for="(data) in emptyProductCount" style="height:23px;">
+                                <tr v-for="(data) in emptyProductCount" style="height:27px;">
                                     <td class="text-center border-left border-right A4w45"></td>
                                     <td class="left strong border-right A4w400" style="padding-left:10px !important;"></td>
                                     <td class="border-right text-center"></td>
@@ -745,7 +1005,7 @@
                                     <td class="border-right text-center"></td>
                                     <td class="text-right text-center border-right"></td>
                                 </tr>
-                                <tr style="height:23px;">
+                                <tr style="height:27px;">
                                     <td class="center border-left border-right border-top border-bottom"></td>
                                     <td class="text-center border-right border-top border-bottom">
                                         <strong>Total</strong>
@@ -767,71 +1027,72 @@
                                         </strong>
                                     </td>
                                 </tr>
-                            </tbody>
-                        </table>
+                            </table>
+                        </div>
                     </div>
-                </div>
-                <div class="col-md-12 pt-2 pb-2 border-left border-bottom border-right border-bottom">
-                    <span>
-                        Amount (in words) &nbsp;
-                        <strong>
-                            <i class="fa fa-inr"></i>
-                            {{TotalInWords}} Only
-                        </strong>
-                    </span>
-                </div>
-                <div class="col-md-6 col-sm-6 border-left border-bottom">
-                    <div><strong>Declaration</strong></div>
-                    <div>
-                        We declare that this Invoice shows the actual price of the goods
-                        described and that all particulars are true and correct
-                    </div>
-                </div>
-                <div class="col-md-6 col-sm-6 border-right border-bottom">
-                    <div><strong class="pull-right">for @Model.BusinessName</strong></div>
-                    <div style="padding-top: 35px;">
-                        <span class="pull-right">
-                            Authorised Signatory
+                    <div class="col-md-12 pt-2 pb-2 border-left border-bottom border-right border-bottom">
+                        <span>
+                            Amount (in words) &nbsp;
+                            <strong>
+                                <i class="fa fa-inr"></i>
+                                {{TotalInWords}} Only
+                            </strong>
                         </span>
                     </div>
+                    <div class="col-md-6 col-sm-6 border-left border-bottom">
+                        <div><strong>Declaration</strong></div>
+                        <div>
+                            We declare that this Invoice shows the actual price of the goods
+                            described and that all particulars are true and correct
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-6 border-right border-bottom">
+                        <div><strong class="pull-right">for @Model.BusinessName</strong></div>
+                        <div style="padding-top: 35px;">
+                            <span class="pull-right">
+                                Authorised Signatory
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 offset-4">
+                    This is a Computer Generated Invoice.
                 </div>
             </div>
-            <div class="col-md-6 offset-4">
-                This is a Computer Generated Invoice.
-            </div>
         </div>
+
     </div>
 </div>
 <script src="~/Scripts/NumberToWords.js"></script>
 <script>
-        $(document).ready(function () {
+    $(document).ready(function () {
 
-            var getNewItemRow = function () {
-                var row = {
-                    Name: "",
-                    HSN: "",
-                    MeasuringUnit: "",
-                    Quantity: "",
-                    TotalCGSTAmount: "",
-                    TotalSGSTAmount: "",
-                    TotalAmount: "",
-                    SubTotal: "",
-                    Price: "",
-                    GST: "",
-                    CGST: "",
-                    SGST: "",
-                    Discount: "",
-                    TotalDiscount: "",
-                    ItemId: 0,
-                    SaleId: 0,
-                    Id: 0,
-                    isEditName: false
-                }
-                return row;
+        var getNewItemRow = function () {
+            var row = {
+                Name: "",
+                HSN: "",
+                MeasuringUnit: "",
+                Quantity: "",
+                TotalCGSTAmount: "",
+                TotalSGSTAmount: "",
+                TotalAmount: "",
+                SubTotal: "",
+                Price: "",
+                GST: "",
+                CGST: "",
+                SGST: "",
+                Discount: "",
+                TotalDiscount: "",
+                ItemId: 0,
+                SaleId: 0,
+                Id: 0,
+                isEditName: false
             }
+            return row;
+        }
         var items = [];
-            for (var i = 0; i < 25; i++) {
-                items.push(getNewItemRow());
+        for (var i = 0; i < 25; i++) {
+            items.push(getNewItemRow());
         }
 
         function getDate() {
@@ -855,29 +1116,30 @@
                 pad2(currentDate.getSeconds());
         }
 
-            var obj = {
-                customerCopy: {
-                    CustomerName :"",
-                    CustomerGSTIN:"",
-                    CustomerEmailId: "",
-                    CustomerAddress: "",
-                    CustomerState: "",
-                    CustomerStateCode: "",
-                    CustomerMobileNumber:""
-                },
+        var obj = {
+            customerCopy: {
+                CustomerName: "",
+                CustomerGSTIN: "",
+                CustomerEmailId: "",
+                CustomerAddress: "",
+                CustomerState: "",
+                CustomerStateCode: "",
+                CustomerMobileNumber: ""
+            },
             alertFailureMessage: "",
             alertMessage: "",
             items: items,
             isPreview: false,
+            isA5: false,
             isSelect2Rendered: true,
-                stateObj: { id: -1, name: "Select state" },
+            stateObj: { id: -1, name: "Select state" },
             CustomerId: 0,
             CustomerName: "",
             CustomerGSTIN: "",
-            CustomerEmailId:"",
+            CustomerEmailId: "",
             CustomerAddress: "",
             CustomerState: "",
-            CustomerStateCode:29,
+            CustomerStateCode: 29,
             CustomerMobileNumber: "",
             DispatchVehicleNumber: "",
             DispatchReferenceName: "",
@@ -896,7 +1158,7 @@
             isComputeTaxOnTotal: true,
             billSettings: {
                 ProductColumn: "",
-                BillColumn:""
+                BillColumn: ""
             }
         }
         new Vue({
@@ -1006,7 +1268,7 @@
                         }
                     }
                 },
-                closeAlertMessage: function(property) {
+                closeAlertMessage: function (property) {
                     this[property] = "";
                 },
                 displayFormat: function (data, isPercent = false) {
@@ -1022,9 +1284,10 @@
                     }
                     return formatNumber;
                 },
-                showOrHidePreview: function (value) {
-                    this.getEmptyProductCount();
+                showOrHidePreview: function (value, isA5) {
                     this.isPreview = value;
+                    this.isA5 = isA5;
+                    this.getEmptyProductCount();
                     this.TotalInWords = convertNumberToWords(this.total);
                 },
                 print: function (id) {
@@ -1051,7 +1314,7 @@
                 roundOffTwoPlace: function (number) {
                     return 0 || Math.round(number * 100) / 100
                 },
-                save: function() {
+                save: function () {
                     var self = this;
                     var validData = [];
                     self.items.forEach((data) => {
@@ -1072,14 +1335,14 @@
                             SaleDetail: {
                                 BusinessName: "@Model.BusinessName",
                                 DispatchReferenceName: self.DispatchReferenceName,
-                                DispatchVehicleNumber:self.DispatchVehicleNumber,
+                                DispatchVehicleNumber: self.DispatchVehicleNumber,
                                 TotalCGSTAmount: self.tax / 2,
                                 TotalSGSTAmount: self.tax / 2,
                                 TotalAmount: self.total,
                                 Invoice: self.Invoice,
                                 SubTotal: self.subTotal,
                                 TempDate: self.Date,
-                                Id:self.Id
+                                Id: self.Id
                             },
                             SaleItems: validData,
                             Customer: {
@@ -1098,7 +1361,7 @@
                             data: JSON.stringify(finalData),
                             dataType: 'json',
                             contentType: 'application/json; charset=utf-8',
-                            success: function() {
+                            success: function () {
                                 $("#success-modal").modal({ backdrop: 'static', keyboard: false, show: true });
                             },
                             error: function (res) {
@@ -1112,6 +1375,7 @@
                     self.emptyProductCount = [];
                     var totalTaxSlab = Object.keys(self.taxSlot).length - 1;
                     var skipEmptyCount = totalTaxSlab * 2;
+                    var productCount = 0;
                     self.items.forEach(function (data) {
                         if (data.Name.trim().length === 0) {
                             if (skipEmptyCount > 0) {
@@ -1120,7 +1384,32 @@
                             else
                                 self.emptyProductCount.push(1);
                         }
+                        else {
+                            productCount++;
+                        }
                     });
+                    var totalRows = self.emptyProductCount.length + (totalTaxSlab * 2) + productCount;
+
+                    if (self.isA5) {
+                        // 40 rows = 28px * 40 = 1100px;
+                        if (totalRows < 23) {
+                            for (var i = 0; i < 23 - totalRows; i++) {
+                                self.emptyProductCount.push(1);
+                            }
+                        }
+                        else {
+                            for (var i = 0; i < totalRows - 23; i++) {
+                                self.emptyProductCount.pop();
+                            }
+                        }
+                    } else {
+                        // 40 rows = 28px * 40 = 1100px;
+                        if (totalRows < 35) {
+                            for (var i = 0; i < 35 - totalRows; i++) {
+                                self.emptyProductCount.push(1);
+                            }
+                        }
+                    }
                 },
                 initSelect2: function () {
                     var self = this;
@@ -1146,7 +1435,7 @@
                                         MobileNumber: customer.MobileNumber,
                                         Email: customer.Email,
                                         State: customer.State,
-                                        StateCode : customer.StateCode
+                                        StateCode: customer.StateCode
                                     });
                                 });
 
@@ -1237,7 +1526,7 @@
                 taxSlot: function () {
                     var self = this;
                     var slot = {};
-                    this.items.forEach(function(item) {
+                    this.items.forEach(function (item) {
                         if (item.CGST) {
                             var property = item.CGST;
                             slot[property] = (slot[property] || 0) + item.TotalCGSTAmount;
@@ -1245,7 +1534,7 @@
                     });
                     return slot;
                 },
-                subTotal: function() {
+                subTotal: function () {
                     var totalAmount = 0;
                     var totalItems = 0;
                     this.items.forEach(function (item) {
@@ -1255,17 +1544,17 @@
                     this.TotalQuantity = totalItems;
                     return this.roundOffTwoPlace(totalAmount);
                 },
-                tax: function() {
+                tax: function () {
                     var totalTax = 0;
-                    this.items.forEach(function(item) {
+                    this.items.forEach(function (item) {
                         totalTax += Math.round((parseFloat(item.TotalCGSTAmount || 0) +
-                                    parseFloat(item.TotalSGSTAmount || 0)) *
-                                100) /
+                            parseFloat(item.TotalSGSTAmount || 0)) *
+                            100) /
                             100;
                     });
                     return this.roundOffTwoPlace(totalTax);
                 },
-                total: function() {
+                total: function () {
                     var total = Math.round((parseFloat(this.subTotal) + parseFloat(this.tax)) * 100) / 100;
                     var roundOffTotal = Math.ceil(total);
                     this.RoundOff = (roundOffTotal - total).toFixed(2);
@@ -1291,7 +1580,7 @@
                     $.get(`/Sale/GetDataById/${id}`,
                         function (data) {
                             self.CustomerAddress = data.Customer.Address,
-                               self.CustomerMobileNumber = data.Customer.MobileNumber,
+                                self.CustomerMobileNumber = data.Customer.MobileNumber,
                                 self.DispatchVehicleNumber = data.SaleDetail.DispatchVehicleNumber,
                                 self.DispatchReferenceName = data.SaleDetail.DispatchReferenceName,
                                 self.CustomerName = data.Customer.Name;

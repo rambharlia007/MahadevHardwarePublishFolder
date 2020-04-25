@@ -204,8 +204,8 @@
             el: '#app',
             data: obj,
             methods: {
-                check: function (e) {
-                    this.EnableStockCount = e;
+                check: function (value) {
+                    this.User.EnableStockCount = value;
                 },
                 openModalForRegisterUser: function () {
                     $("#myModal").modal({ backdrop: 'static', keyboard: false, show: true });
