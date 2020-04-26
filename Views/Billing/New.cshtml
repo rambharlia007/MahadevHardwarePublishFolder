@@ -159,17 +159,19 @@
         #print-bill-a5 {
             font-size:1.3em !important;
         }
-        #print-bill td, #print-bill-a5 td {
-            padding-bottom: 0px !important;
-            padding-right: 0px !important;
-            font-weight: bold !important;
-        }
+            #print-bill td, #print-bill-a5 td {
+                padding-bottom: 0px !important;
+                padding-right: 5px !important;
+                padding-left: 5px !important;
+                font-weight: bold !important;
+            }
 
-        #print-bill th, #print-bill-a5 th {
-            padding-bottom: 0px !important;
-            padding-right: 0px !important;
-            font-weight: bolder !important;
-        }
+            #print-bill th, #print-bill-a5 th {
+                padding-bottom: 0px !important;
+                padding-right: 5px !important;
+                padding-left: 5px !important;
+                font-weight: bolder !important;
+            }
     }
 
     #print-bill div, #print-bill-a5 div {
@@ -180,23 +182,21 @@
         max-height: 25px !important;
     }
 
-    #print-bill td, #print-bill-a5 td {
-        padding-bottom: 0px !important;
-    }
-
     #print-bill span, #print-bill-a5 span {
         font-weight: bold !important;
     }
 
     #print-bill td, #print-bill-a5 td {
         padding-bottom: 0px !important;
-        padding-right: 0px !important;
+        padding-right: 5px !important;
+        padding-left: 5px !important;
         font-weight: bold !important;
     }
 
     #print-bill th, #print-bill-a5 th {
         padding-bottom: 0px !important;
-        padding-right: 0px !important;
+        padding-right: 5px !important;
+        padding-left: 5px !important;
         font-weight: bolder !important;
     }
 
@@ -212,7 +212,7 @@
 
 <div id="app" v-cloak>
     <div class="row d-print-none" style="background-color: #f6f7f8 !important;">
-        <div class="col-md-8">
+        <div class="col-md-6">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb" style="padding-bottom: 0px; margin-bottom: 0px; background-color: #f6f7f8 !important;">
                     <li class="breadcrumb-item"><i class="fa fa-home">&nbsp;</i><a href="#">Home</a></li>
@@ -221,12 +221,21 @@
             </nav>
             <h4 style="padding-left: 15px;">Billing</h4>
         </div>
-        <div class="col-md-4">
-            <div class="dropdown" style="margin-top:25px; float:right;" v-if="isPrintOnly || !isPreview">
+        <div class="col-md-6">
+            <div class="dropdown" style="margin-top:25px; float:right;" v-if="isPrintOnly || isPreview">
                 <a class="btn btn-success btn-sm dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">
-                    Print Preview
+                    {{billNumberTitle}}
                 </a>
-
+                <div class="dropdown-menu pointer dropdown-menu-right" aria-labelledby="dropdownMenuLink">
+                    <a class="dropdown-item" v-on:click="printCopies(1)">Customer copy</a>
+                    <a class="dropdown-item" v-on:click="printCopies(2)">Customer & supplier copy</a>
+                    <a class="dropdown-item" v-on:click="printCopies(3)">Customer,transporter & supplier copy</a>
+                </div>
+            </div>
+            <div class="dropdown" style="margin-top:25px; margin-right:10px; float:right;" v-if="isPrintOnly || !isPreview">
+                <a class="btn btn-success btn-sm dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">
+                    {{isA5 ? 'A5-Page' : 'A4-Page'}}
+                </a>
                 <div class="dropdown-menu pointer" aria-labelledby="dropdownMenuLink">
                     <a class="dropdown-item" v-on:click="showOrHidePreview(true, false)">A4-Page</a>
                     <a class="dropdown-item" v-on:click="showOrHidePreview(true, true)">A5-Page</a>
@@ -553,6 +562,9 @@
                     </div>
                     <table style="font-size: 0.85em; color: #6c757d !important;" class="table table-bordered table-sm">
                         <tr>
+                            <th class="text-center" colspan="3">Product column and Bill column mappings</th>
+                        </tr>
+                        <tr>
                             <th class="text-center">Product Columns</th>
                             <th class="text-center" style="vertical-align:middle !important" rowspan="3">Map To</th>
                             <th class="text-center">Bill Columns</th>
@@ -570,6 +582,75 @@
                                     <option value="Price">Price </option>
                                     <option value="TotalAmount">Total</option>
                                 </select>
+                            </td>
+                        </tr>
+                    </table>
+                    <hr />
+                    <table style="font-size: 0.85em; color: #6c757d !important;" class="table table-bordered table-sm">
+                        <tr>
+                            <th colspan="2" class="text-center">
+                                Print bill column settings (show/hide)
+                                <i class="fa fa-info-circle fa-lg" data-toggle="tooltip" title="The column to be shown or hidden in the Bill"></i>
+                            </th>
+                        </tr>
+                        <tr>
+                            <th class="text-center" style="width:350px; vertical-align:middle">HSN column required</th>
+                            <td class="text-center">
+                                <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                                    <label class="btn btn-outline-success btn-sm" style="width:150px !important">
+                                        <input type="radio" checked v-on:click="printBillColumnSettings('IsHSNRequired', true)"> Show
+                                    </label>
+                                    <label class="btn btn-outline-success btn-sm active" style="width:150px !important">
+                                        <input type="radio" v-on:click="printBillColumnSettings('IsHSNRequired' ,false)"> Hide
+                                    </label>
+                                    <span style="padding-left:10px;">
+                                    </span>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="text-center" style="width:350px; vertical-align:middle">Measuring unit column required</th>
+                            <td class="text-center">
+                                <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                                    <label class="btn btn-outline-success btn-sm" style="width:150px !important">
+                                        <input type="radio" checked v-on:click="printBillColumnSettings('IsPerRequired' , true)"> Show
+                                    </label>
+                                    <label class="btn btn-outline-success btn-sm active" style="width:150px !important">
+                                        <input type="radio" v-on:click="printBillColumnSettings('IsPerRequired' ,false)"> Hide
+                                    </label>
+                                    <span style="padding-left:10px;">
+                                    </span>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="text-center" style="width:350px; vertical-align:middle">Discount column required</th>
+                            <td class="text-center">
+                                <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                                    <label class="btn btn-outline-success btn-sm" style="width:150px !important">
+                                        <input type="radio" checked v-on:click="printBillColumnSettings('IsDiscountRequired' ,true)"> Show
+                                    </label>
+                                    <label class="btn btn-outline-success btn-sm active" style="width:150px !important">
+                                        <input type="radio" v-on:click="printBillColumnSettings('IsDiscountRequired' ,false)"> Hide
+                                    </label>
+                                    <span style="padding-left:10px;">
+                                    </span>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="text-center" style="width:350px; vertical-align:middle">GST rate column required</th>
+                            <td class="text-center">
+                                <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                                    <label class="btn btn-outline-success btn-sm" style="width:150px !important">
+                                        <input type="radio" checked v-on:click="printBillColumnSettings('IsGstRate' ,true)"> Show
+                                    </label>
+                                    <label class="btn btn-outline-success btn-sm active" style="width:150px !important">
+                                        <input type="radio" v-on:click="printBillColumnSettings('IsGstRate' ,false)"> Hide
+                                    </label>
+                                    <span style="padding-left:10px;">
+                                    </span>
+                                </div>
                             </td>
                         </tr>
                     </table>
@@ -597,17 +678,256 @@
     </div>
 
     @*print A5 page*@
-    <div style="border:none; margin-left:5px !important; margin-right:5px !important" v-show="isPreview && isA5">
-        <div id="print-bill-a5" class="card" style="border:none;">
-            <div class="card-header text-center" style="border:none">
-                <strong class="text-center">Tax Invoice</strong>
-                <span class="pull-right">(ORIGINAL FOR RECIPIENT)</span>
+    <div v-for="printData in repeatBill" v-show="isPreview && isA5">
+        <div style="border:none; margin-left:15px !important; margin-right:5px !important; page-break-after: always;">
+            <div id="print-bill-a5" class="card" style="border:none;">
+                <div class="card-header text-center" style="border:none">
+                    <strong class="text-center" style="font-size:x-large">Tax Invoice</strong>
+                    <span class="pull-right">{{printData.title}}</span>
+                </div>
+                <div class="card-body pt-0">
+                    <div class="row">
+                        <div class="col-sm-7 border-right border-top border-left border-bottom">
+                            <div class="row border-bottom" style="padding-bottom:10px !important">
+                                <div class="col-sm-12">
+                                    <table style="width:100%" class="table-borderless">
+                                        <tr>
+                                            <th colspan=2>@Model.BusinessName</th>
+                                        </tr>
+                                        <tr>
+                                            <th colspan=2>@Model.Address</th>
+                                        </tr>
+                                        <tr>
+                                            <th style="width:150px !important">GSTIN/UIN:</th>
+                                            <td>@Model.GSTIN</td>
+                                        </tr>
+                                        <tr>
+                                            <th style="width:150px !important">State Name:</th>
+                                            <td>@Model.State  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="font-weight:bolder">Code:</span> @Model.StateCode</td>
+                                        </tr>
+                                        @*<tr>
+                                                <th style="width:150px !important">Email:</th>
+                                                <td>@Model.Email</td>
+                                            </tr>*@
+                                        <tr>
+                                            <th style="width:150px !important">Contact:</th>
+                                            <td>@Model.MobileNumber</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="row" style="padding-bottom:10px !important">
+                                <div class="col-sm-12">
+                                    <table style="width: 100%" class="table-borderless">
+                                        <tr>
+                                            <td colspan=2>Buyer</td>
+                                        </tr>
+                                        <tr>
+                                            <th colspan=2>{{CustomerName}}</th>
+                                        </tr>
+                                        <tr>
+                                            <th colspan=2>{{CustomerAddress}}</th>
+                                        </tr>
+                                        <tr>
+                                            <th style="width:150px !important">GSTIN/UIN:</th>
+                                            <td>{{CustomerGSTIN ? CustomerGSTIN : 'NA'}}</td>
+                                        </tr>
+                                        <tr>
+                                            <th style="width:150px !important">State Name:</th>
+                                            <td>{{stateObj.id > 0 ? stateObj.name : 'NA'}} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="font-weight:bolder">Code:&nbsp;&nbsp;</span>{{stateObj.id > 0 ? stateObj.id : 'NA'}}</td>
+                                        </tr>
+                                        <tr v-if="CustomerMobileNumber">
+                                            <th style="width:150px !important">Contact:</th>
+                                            <td>{{CustomerMobileNumber}}</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-5 border-bottom border-right border-top table-responsive-sm">
+                            <table style="width:100%" class="table-borderless">
+                                <tr>
+                                    <th style="width:150px !important">Invoice No. :</th>
+                                    <td>{{Invoice}}</td>
+                                </tr>
+                                <tr>
+                                    <th style="width:150px !important">Date:</th>
+                                    <td>{{Date}}</td>
+                                </tr>
+                                <tr>
+                                    <th>Dispatched Vehicle No.</th>
+                                    <td>
+                                        {{DispatchVehicleNumber}}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Dispatched Reference(s):</th>
+                                    <td>
+                                        {{DispatchReferenceName}}
+                                    </td>
+                                </tr>
+                            </table>
+
+                        </div>
+                        <div class="col-md-12 pr-0 pl-0">
+                            <div class="table-responsive-sm">
+                                <table style="width:100%" class="table-borderless">
+                                    <tr style="height:27px;">
+                                        <th class="border-right border-bottom border-left text-center A4w45">SI No.</th>
+                                        <th class="border-right border-bottom text-center A5w400">Description of Goods</th>
+                                        <th class="border-right border-bottom text-center" v-if="billSettings.IsHSNRequired">HSN/SAC</th>
+                                        <th class="border-right border-bottom text-center" v-if="billSettings.IsGstRate">GST Rate</th>
+                                        <th class="border-right border-bottom text-center">Quantity</th>
+                                        <th class="border-right border-bottom text-center">Rate</th>
+                                        <th class="border-right border-bottom text-center" v-if="billSettings.IsPerRequired">per</th>
+                                        <th class="border-right border-bottom text-center" v-if="billSettings.IsDiscountRequired">Disc %</th>
+                                        <th class="border-bottom text-center border-right">Amount</th>
+                                    </tr>
+                                    <tr v-for="(item,index) in items" v-if="item.Name" style="height:27px;">
+                                        <td class="text-center border-left border-right A4w45">{{index+1}}</td>
+                                        <td class="left strong border-right A5w400" style="padding-left:10px !important;"><strong>{{item.Name}}</strong></td>
+                                        <td class="border-right text-left" v-if="billSettings.IsHSNRequired">{{item.HSN}}</td>
+                                        <td class="text-left border-right" v-if="billSettings.IsGstRate">{{displayFormat(item.GST, true)}}</td>
+                                        <th class="border-right text-center">{{item.Quantity}} {{item.MeasuringUnit}}</th>
+                                        <td class="border-right text-left">{{displayFormat(item.Price)}}</td>
+                                        <td class="border-right text-left" v-if="billSettings.IsPerRequired">{{item.MeasuringUnit}}</td>
+                                        <td class="border-right text-left" v-if="billSettings.IsDiscountRequired">{{displayFormat(item.Discount, true)}}</td>
+                                        <th class="text-right border-right">{{displayFormat(item.SubTotal)}}</th>
+                                    </tr>
+                                    <tr style="height:27px;">
+                                        <td class="border-right border-left"></td>
+                                        <td class="border-right"></td>
+                                        <td class="border-right" v-if="billSettings.IsHSNRequired"></td>
+                                        <td class="border-right" v-if="billSettings.IsGstRate"></td>
+                                        <td class="border-right"></td>
+                                        <td class="border-right"></td>
+                                        <td class="border-right" v-if="billSettings.IsPerRequired"></td>
+                                        <td class="border-right" v-if="billSettings.IsDiscountRequired"></td>
+                                        <td class="text-right border-right border-top"><strong>{{displayFormat(subTotal)}}</strong></td>
+                                    </tr>
+                                    <template v-for="(value, propertyName) in taxSlot">
+                                        <tr style="height:27px;">
+                                            <td class="center border-left border-right"></td>
+                                            <td class="text-center border-right">
+                                                <strong>Output &nbsp; SGST@@{{propertyName}}%</strong>
+                                            </td>
+                                            <td class="border-right" v-if="billSettings.IsHSNRequired"></td>
+                                            <td class="border-right" v-if="billSettings.IsGstRate"></td>
+                                            <td class="border-right"></td>
+                                            <td class="border-right"></td>
+                                            <td class="border-right" v-if="billSettings.IsPerRequired"></td>
+                                            <td class="border-right" v-if="billSettings.IsDiscountRequired"></td>
+                                            <td class="text-right border-right">{{displayFormat(value)}}</td>
+                                        </tr>
+                                        <tr style="height:27px;">
+                                            <td class="center border-left border-right"></td>
+                                            <td class="text-center border-right">
+                                                <strong>Output &nbsp; CGST@@{{propertyName}}%</strong>
+                                            </td>
+                                            <td class="border-right" v-if="billSettings.IsHSNRequired"></td>
+                                            <td class="border-right" v-if="billSettings.IsGstRate"></td>
+                                            <td class="border-right"></td>
+                                            <td class="border-right"></td>
+                                            <td class="border-right" v-if="billSettings.IsPerRequired"></td>
+                                            <td class="border-right" v-if="billSettings.IsDiscountRequired"></td>
+                                            <td class="text-right border-right">{{displayFormat(value)}}</td>
+                                        </tr>
+                                    </template>
+                                    <tr style="height:27px;">
+                                        <td class="center border-left border-right"></td>
+                                        <td class="text-center border-right">
+                                            <strong>Round Off</strong>
+                                        </td>
+                                        <td class="border-right" v-if="billSettings.IsHSNRequired"></td>
+                                        <td class="border-right" v-if="billSettings.IsGstRate"></td>
+                                        <td class="border-right"></td>
+                                        <td class="border-right"></td>
+                                        <td class="border-right" v-if="billSettings.IsPerRequired"></td>
+                                        <td class="border-right" v-if="billSettings.IsDiscountRequired"></td>
+                                        <td class="text-right border-right">{{displayFormat(RoundOff)}}</td>
+                                    </tr>
+                                    <tr v-for="(data) in emptyProductCount" style="height:27px;">
+                                        <td class="text-center border-left border-right A4w45"></td>
+                                        <td class="left strong border-right A5w400" style="padding-left:10px !important;"></td>
+                                        <td class="border-right text-center" v-if="billSettings.IsHSNRequired"></td>
+                                        <td class="text-center border-right" v-if="billSettings.IsGstRate"></td>
+                                        <td class="border-right text-center"></td>
+                                        <td class="border-right text-center"></td>
+                                        <td class="border-right text-center" v-if="billSettings.IsPerRequired"></td>
+                                        <td class="border-right text-center" v-if="billSettings.IsDiscountRequired"></td>
+                                        <td class="text-right text-center border-right"></td>
+                                    </tr>
+                                    <tr style="height:27px;">
+                                        <td class="center border-left border-right border-top border-bottom"></td>
+                                        <td class="text-center border-right border-top border-bottom">
+                                            <strong>Total</strong>
+                                        </td>
+                                        <td class="border-right border-top border-bottom" v-if="billSettings.IsHSNRequired"></td>
+                                        <td class="border-right border-top border-bottom" v-if="billSettings.IsGstRate"></td>
+                                        <td class="text-center border-right border-top border-bottom">
+                                            <strong>
+                                                {{TotalQuantity}}
+                                            </strong>
+                                        </td>
+                                        <td class="border-right border-top border-bottom"></td>
+                                        <td class="border-right border-top border-bottom" v-if="billSettings.IsPerRequired"></td>
+                                        <td class="border-right border-top border-bottom" v-if="billSettings.IsDiscountRequired"></td>
+                                        <td class="text-right border-top border-bottom border-right">
+                                            <strong>
+                                                <i class="fa fa-inr"></i>
+                                                {{displayFormat(total)}}
+                                            </strong>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="col-md-12 pt-2 pb-2 border-left border-bottom border-right border-bottom">
+                            <span>
+                                Amount (in words) &nbsp;
+                                <strong>
+                                    <i class="fa fa-inr"></i>
+                                    {{TotalInWords}} Only
+                                </strong>
+                            </span>
+                        </div>
+                        <div class="col-md-7 col-sm-7 border-left border-bottom">
+                            <div><strong>Declaration</strong></div>
+                            <div>
+                                1. We declare that this Invoice shows the actual price of the goods
+                                described and that all particulars are true and correct <br />
+                                2. Goods once sold cannot be taken back or exchanged. <br />
+                                3. Subject to Bangalore Jurisdiction.
+                            </div>
+                        </div>
+                        <div class="col-md-5 col-sm-5 border-right border-bottom">
+                            <div><strong class="pull-right">for @Model.BusinessName</strong></div>
+                            <div style="padding-top: 85px;">
+                                <span class="pull-right">
+                                    Authorised Signatory
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 offset-4">
+                        This is a Computer Generated Invoice.
+                    </div>
+                </div>
             </div>
-            <div class="card-body pt-0">
-                <div class="row">
-                    <div class="col-sm-8 border-right border-top border-left border-bottom">
-                        <div class="row border-bottom" style="padding-bottom:10px !important">
-                            <div class="col-sm-12">
+        </div>
+     </div>
+
+        @*print A4 page*@
+        <div v-for="printData in repeatBill" v-show="isPreview && !isA5">
+            <div style="border:none; margin-left:10px !important; margin-right:10px !important; margin-top:10px !important; page-break-after: always;">
+                <div id="print-bill" class="card" style="border:none;">
+                    <div class="card-header text-center" style="border:none">
+                        <strong class="text-center">Tax Invoice</strong>
+                        <span class="pull-right">{{printData.title}}</span>
+                    </div>
+                    <div class="card-body pt-0">
+                        <div class="row">
+                            <div class="col-sm-4 border-right border-top border-left border-bottom A4pb">
                                 <table style="width:100%" class="table-borderless">
                                     <tr>
                                         <th colspan=2>@Model.BusinessName</th>
@@ -623,19 +943,17 @@
                                         <th>State Name:</th>
                                         <td>@Model.State  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="font-weight:bolder">Code:</span> @Model.StateCode</td>
                                     </tr>
+                                    @*<tr>
+                                            <th style="width:150px !important">Email:</th>
+                                            <td>@Model.Email</td>
+                                        </tr>*@
                                     <tr>
-                                        <th>Email:</th>
-                                        <td>@Model.Email</td>
-                                    </tr>
-                                    <tr>
-                                        <th>Phone:</th>
+                                        <th>Contact:</th>
                                         <td>@Model.MobileNumber</td>
                                     </tr>
                                 </table>
                             </div>
-                        </div>
-                        <div class="row" style="padding-bottom:10px !important">
-                            <div class="col-sm-12">
+                            <div class="col-sm-4 border-right border-top border-bottom">
                                 <table style="width: 100%" class="table-borderless">
                                     <tr>
                                         <td colspan=2>Buyer</td>
@@ -648,423 +966,192 @@
                                     </tr>
                                     <tr>
                                         <th>GSTIN/UIN:</th>
-                                        <td>{{CustomerGSTIN}}</td>
-                                    </tr>
-                                    <tr v-if="stateObj.id > 0">
-                                        <th>State Name:</th>
-                                        <td>{{stateObj.name}} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="font-weight:bolder">Code:</span>{{stateObj.id}}</td>
+                                        <td>{{CustomerGSTIN ? CustomerGSTIN : 'NA'}}</td>
                                     </tr>
                                     <tr>
-                                        <th>Phone:</th>
+                                        <th>State Name:</th>
+                                        <td>{{stateObj.id > 0 ? stateObj.name : 'NA'}} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="font-weight:bolder">Code:&nbsp;&nbsp;</span>{{stateObj.id > 0 ? stateObj.id : 'NA'}}</td>
+                                    </tr>
+                                    <tr v-if="CustomerMobileNumber">
+                                        <th>Contact:</th>
                                         <td>{{CustomerMobileNumber}}</td>
                                     </tr>
                                 </table>
                             </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-4 border-bottom border-right border-top table-responsive-sm">
-                        <table style="width:100%" class="table-borderless">
-                            <tr>
-                                <th>Date:</th>
-                                <td>{{Date}}</td>
-                            </tr>
-                            <tr>
-                                <th>Invoice:</th>
-                                <td>{{Invoice}}</td>
-                            </tr>
-                            <tr>
-                                <th>Dispatched Vehicle No.</th>
-                                <td>
-                                    {{DispatchVehicleNumber}}
-                                </td>
-                            </tr>
-                            <tr>
-                                <th>Dispatched Reference(s):</th>
-                                <td>
-                                    {{DispatchReferenceName}}
-                                </td>
-                            </tr>
-                        </table>
-
-                    </div>
-                    <div class="col-md-12 pr-0 pl-0">
-                        <div class="table-responsive-sm">
-                            <table style="width:100%" class="table-borderless">
-                                <tr style="height:27px;">
-                                    <th class="border-right border-bottom border-left text-center A4w45">#</th>
-                                    <th class="border-right border-bottom text-center A5w400">Description of Goods</th>
-                                    <th class="border-right border-bottom text-center">HSN/SAC</th>
-                                    <th class="border-right border-bottom text-center">GST Rate</th>
-                                    <th class="border-right border-bottom text-center">Quantity</th>
-                                    <th class="border-right border-bottom text-center">Rate</th>
-                                    @*<th class="border-right border-bottom text-center">per</th>*@
-                                    <th class="border-right border-bottom text-center">Disc %</th>
-                                    <th class="border-bottom text-center border-right">Amount</th>
-                                </tr>
-                                <tr v-for="(item,index) in items" v-if="item.Name" style="height:27px;">
-                                    <td class="text-center border-left border-right A4w45">{{index+1}}</td>
-                                    <td class="left strong border-right A5w400" style="padding-left:10px !important;"><strong>{{item.Name}}</strong></td>
-                                    <td class="border-right text-center">{{item.HSN}}</td>
-                                    <td class="text-center border-right">{{displayFormat(item.GST, true)}}</td>
-                                    <td class="border-right text-center">{{item.Quantity}} {{item.MeasuringUnit}}</td>
-                                    <td class="border-right text-center">{{displayFormat(item.Price)}}</td>
-                                    @*<td class="border-right text-center">{{item.MeasuringUnit}}</td>*@
-                                    <td class="border-right text-center">{{displayFormat(item.Discount, true)}}</td>
-                                    <td class="text-right text-center border-right">{{displayFormat(item.SubTotal)}}</td>
-                                </tr>
-                                <tr style="height:27px;">
-                                    <td class="border-right border-left"></td>
-                                    <td class="border-right"></td>
-                                    <td class="border-right"></td>
-                                    <td class="border-right"></td>
-                                    <td class="border-right"></td>
-                                    <td class="border-right"></td>
-                                    @*<td class="border-right"></td>*@
-                                    <td class="border-right"></td>
-                                    <td class="text-center border-right border-top"><strong>{{displayFormat(subTotal)}}</strong></td>
-                                </tr>
-                                <template v-for="(value, propertyName) in taxSlot">
-                                    <tr style="height:27px;">
-                                        <td class="center border-left border-right"></td>
-                                        <td class="text-center border-right">
-                                            <strong>Output &nbsp; SGST@@{{propertyName}}%</strong>
-                                        </td>
-                                        <td class="border-right"></td>
-                                        <td class="border-right"></td>
-                                        <td class="border-right"></td>
-                                        <td class="border-right"></td>
-                                        @*<td class="border-right"></td>*@
-                                        <td class="border-right"></td>
-                                        <td class="text-center border-right">{{displayFormat(value)}}</td>
+                            <div class="col-sm-4 border-bottom border-right border-top">
+                                <table style="width:100%" class="table-borderless">
+                                    <tr>
+                                        <th>Invoice No. :</th>
+                                        <td>{{Invoice}}</td>
                                     </tr>
-                                    <tr style="height:27px;">
-                                        <td class="center border-left border-right"></td>
-                                        <td class="text-center border-right">
-                                            <strong>Output &nbsp; CGST@@{{propertyName}}%</strong>
-                                        </td>
-                                        <td class="border-right"></td>
-                                        <td class="border-right"></td>
-                                        <td class="border-right"></td>
-                                        <td class="border-right"></td>
-                                        @*<td class="border-right"></td>*@
-                                        <td class="border-right"></td>
-                                        <td class="text-center border-right">{{displayFormat(value)}}</td>
+                                    <tr>
+                                        <th>Date:</th>
+                                        <td>{{Date}}</td>
                                     </tr>
-                                </template>
-                                <tr style="height:27px;">
-                                    <td class="center border-left border-right"></td>
-                                    <td class="text-center border-right">
-                                        <strong>Round Off</strong>
-                                    </td>
-                                    <td class="border-right"></td>
-                                    <td class="border-right"></td>
-                                    <td class="border-right"></td>
-                                    <td class="border-right"></td>
-                                    @*<td class="border-right"></td>*@
-                                    <td class="border-right"></td>
-                                    <td class="text-center border-right">{{displayFormat(RoundOff)}}</td>
-                                </tr>
-                                <tr v-for="(data) in emptyProductCount" style="height:27px;">
-                                    <td class="text-center border-left border-right A4w45"></td>
-                                    <td class="left strong border-right A5w400" style="padding-left:10px !important;"></td>
-                                    <td class="border-right text-center"></td>
-                                    <td class="text-center border-right"></td>
-                                    <td class="border-right text-center"></td>
-                                    <td class="border-right text-center"></td>
-                                    @*<td class="border-right text-center"></td>*@
-                                    <td class="border-right text-center"></td>
-                                    <td class="text-right text-center border-right"></td>
-                                </tr>
-                                <tr style="height:27px;">
-                                    <td class="center border-left border-right border-top border-bottom"></td>
-                                    <td class="text-center border-right border-top border-bottom">
-                                        <strong>Total</strong>
-                                    </td>
-                                    <td class="border-right border-top border-bottom"></td>
-                                    <td class="border-right border-top border-bottom"></td>
-                                    <td class="text-center border-right border-top border-bottom">
-                                        <strong>
-                                            {{TotalQuantity}} 
-                                        </strong>
-                                    </td>
-                                    <td class="border-right border-top border-bottom"></td>
-                                    <td class="border-right border-top border-bottom"></td>
-                                    @*<td class="border-right border-top border-bottom"></td>*@
-                                    <td class="text-center border-top border-bottom border-right">
-                                        <strong>
-                                            <i class="fa fa-inr"></i>
-                                            {{displayFormat(total)}}
-                                        </strong>
-                                    </td>
-                                </tr>
-                            </table>
+                                    <tr>
+                                        <th>Dispatched Vehicle No.</th>
+                                        <td>
+                                            {{DispatchVehicleNumber}}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>Dispatched Reference(s):</th>
+                                        <td>
+                                            {{DispatchReferenceName}}
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="col-md-12 pr-0 pl-0">
+                                <div class="table-responsive-sm">
+                                    <table style="width:100%" class="table-borderless">
+                                        <tr style="height:27px;">
+                                            <th class="border-right border-bottom border-left text-center A4w45">SI No.</th>
+                                            <th class="border-right border-bottom text-center A4w400">Description of Goods</th>
+                                            <th class="border-right border-bottom text-center" v-if="billSettings.IsHSNRequired">HSN/SAC</th>
+                                            <th class="border-right border-bottom text-center" v-if="billSettings.IsGstRate">GST Rate</th>
+                                            <th class="border-right border-bottom text-center">Quantity</th>
+                                            <th class="border-right border-bottom text-center">Rate</th>
+                                            <th class="border-right border-bottom text-center" v-if="billSettings.IsPerRequired">per</th>
+                                            <th class="border-right border-bottom text-center" v-if="billSettings.IsDiscountRequired">Disc %</th>
+                                            <th class="border-bottom text-center border-right">Amount</th>
+                                        </tr>
+                                        <tr v-for="(item,index) in items" v-if="item.Name" style="height:27px;">
+                                            <td class="text-center border-left border-right A4w45">{{index+1}}</td>
+                                            <td class="left strong border-right A4w400" style="padding-left:10px !important;"><strong>{{item.Name}}</strong></td>
+                                            <td class="border-right text-left" v-if="billSettings.IsHSNRequired">{{item.HSN}}</td>
+                                            <td class="text-left border-right" v-if="billSettings.IsGstRate">{{displayFormat(item.GST, true)}}</td>
+                                            <th class="border-right text-center">{{item.Quantity}} {{item.MeasuringUnit}}</th>
+                                            <td class="border-right text-left">{{displayFormat(item.Price)}}</td>
+                                            <td class="border-right text-left" v-if="billSettings.IsPerRequired">{{item.MeasuringUnit}}</td>
+                                            <td class="border-right text-left" v-if="billSettings.IsDiscountRequired">{{displayFormat(item.Discount, true)}}</td>
+                                            <th class="text-right border-right">{{displayFormat(item.SubTotal)}}</th>
+                                        </tr>
+                                        <tr style="height:27px;">
+                                            <td class="border-right border-left"></td>
+                                            <td class="border-right"></td>
+                                            <td class="border-right" v-if="billSettings.IsHSNRequired"></td>
+                                            <td class="border-right" v-if="billSettings.IsGstRate"></td>
+                                            <td class="border-right"></td>
+                                            <td class="border-right"></td>
+                                            <td class="border-right" v-if="billSettings.IsPerRequired"></td>
+                                            <td class="border-right" v-if="billSettings.IsDiscountRequired"></td>
+                                            <td class="text-right border-right border-top"><strong>{{displayFormat(subTotal)}}</strong></td>
+                                        </tr>
+                                        <template v-for="(value, propertyName) in taxSlot">
+                                            <tr style="height:27px;">
+                                                <td class="center border-left border-right"></td>
+                                                <td class="text-center border-right">
+                                                    <strong>Output &nbsp; SGST@@{{propertyName}}%</strong>
+                                                </td>
+                                                <td class="border-right" v-if="billSettings.IsHSNRequired"></td>
+                                                <td class="border-right" v-if="billSettings.IsGstRate"></td>
+                                                <td class="border-right"></td>
+                                                <td class="border-right"></td>
+                                                <td class="border-right" v-if="billSettings.IsPerRequired"></td>
+                                                <td class="border-right" v-if="billSettings.IsDiscountRequired"></td>
+                                                <td class="text-right border-right">{{displayFormat(value)}}</td>
+                                            </tr>
+                                            <tr style="height:27px;">
+                                                <td class="center border-left border-right"></td>
+                                                <td class="text-center border-right">
+                                                    <strong>Output &nbsp; CGST@@{{propertyName}}%</strong>
+                                                </td>
+                                                <td class="border-right" v-if="billSettings.IsHSNRequired"></td>
+                                                <td class="border-right" v-if="billSettings.IsGstRate"></td>
+                                                <td class="border-right"></td>
+                                                <td class="border-right"></td>
+                                                <td class="border-right" v-if="billSettings.IsPerRequired"></td>
+                                                <td class="border-right" v-if="billSettings.IsDiscountRequired"></td>
+                                                <td class="text-right border-right">{{displayFormat(value)}}</td>
+                                            </tr>
+                                        </template>
+                                        <tr style="height:27px;">
+                                            <td class="center border-left border-right"></td>
+                                            <td class="text-center border-right">
+                                                <strong>Round Off</strong>
+                                            </td>
+                                            <td class="border-right" v-if="billSettings.IsHSNRequired"></td>
+                                            <td class="border-right" v-if="billSettings.IsGstRate"></td>
+                                            <td class="border-right"></td>
+                                            <td class="border-right"></td>
+                                            <td class="border-right" v-if="billSettings.IsPerRequired"></td>
+                                            <td class="border-right" v-if="billSettings.IsDiscountRequired"></td>
+                                            <td class="text-right border-right">{{displayFormat(RoundOff)}}</td>
+                                        </tr>
+                                        <tr v-for="(data) in emptyProductCount" style="height:27px;">
+                                            <td class="text-center border-left border-right A4w45"></td>
+                                            <td class="left strong border-right A4w400" style="padding-left:10px !important;"></td>
+                                            <td class="border-right text-center" v-if="billSettings.IsHSNRequired"></td>
+                                            <td class="text-center border-right" v-if="billSettings.IsGstRate"></td>
+                                            <td class="border-right text-center"></td>
+                                            <td class="border-right text-center"></td>
+                                            <td class="border-right text-center" v-if="billSettings.IsPerRequired"></td>
+                                            <td class="border-right text-center" v-if="billSettings.IsDiscountRequired"></td>
+                                            <td class="text-right text-center border-right"></td>
+                                        </tr>
+                                        <tr style="height:27px;">
+                                            <td class="center border-left border-right border-top border-bottom"></td>
+                                            <td class="text-center border-right border-top border-bottom">
+                                                <strong>Total</strong>
+                                            </td>
+                                            <td class="border-right border-top border-bottom" v-if="billSettings.IsHSNRequired"></td>
+                                            <td class="border-right border-top border-bottom" v-if="billSettings.IsGstRate"></td>
+                                            <td class="text-center border-right border-top border-bottom">
+                                                <strong>
+                                                    {{TotalQuantity}}
+                                                </strong>
+                                            </td>
+                                            <td class="border-right border-top border-bottom"></td>
+                                            <td class="border-right border-top border-bottom" v-if="billSettings.IsPerRequired"></td>
+                                            <td class="border-right border-top border-bottom" v-if="billSettings.IsDiscountRequired"></td>
+                                            <td class="text-right border-top border-bottom border-right">
+                                                <strong>
+                                                    <i class="fa fa-inr"></i>
+                                                    {{displayFormat(total)}}
+                                                </strong>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="col-md-12 pt-2 pb-2 border-left border-bottom border-right border-bottom">
+                                <span>
+                                    Amount (in words) &nbsp;
+                                    <strong>
+                                        <i class="fa fa-inr"></i>
+                                        {{TotalInWords}} Only
+                                    </strong>
+                                </span>
+                            </div>
+                            <div class="col-md-6 col-sm-6 border-left border-bottom">
+                                <div><strong>Declaration</strong></div>
+                                <div>
+                                    1. We declare that this Invoice shows the actual price of the goods
+                                    described and that all particulars are true and correct <br />
+                                    2. Goods once sold cannot be taken back or exchanged. <br />
+                                    3. Subject to Bangalore Jurisdiction.
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-sm-6 border-right border-bottom">
+                                <div><strong class="pull-right">for @Model.BusinessName</strong></div>
+                                <div style="padding-top: 85px;">
+                                    <span class="pull-right">
+                                        Authorised Signatory
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 offset-4">
+                            This is a Computer Generated Invoice.
                         </div>
                     </div>
-                    <div class="col-md-12 pt-2 pb-2 border-left border-bottom border-right border-bottom">
-                        <span>
-                            Amount (in words) &nbsp;
-                            <strong>
-                                <i class="fa fa-inr"></i>
-                                {{TotalInWords}} Only
-                            </strong>
-                        </span>
-                    </div>
-                    <div class="col-md-6 col-sm-6 border-left border-bottom">
-                        <div><strong>Declaration</strong></div>
-                        <div>
-                            We declare that this Invoice shows the actual price of the goods
-                            described and that all particulars are true and correct
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-sm-6 border-right border-bottom">
-                        <div><strong class="pull-right">for @Model.BusinessName</strong></div>
-                        <div style="padding-top: 35px;">
-                            <span class="pull-right">
-                                Authorised Signatory
-                            </span>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6 offset-4">
-                    This is a Computer Generated Invoice.
                 </div>
             </div>
         </div>
     </div>
-
-    @*print A4 page*@
-    <div style="border:none; margin-left:10px !important; margin-right:10px !important" v-show="isPreview && !isA5">
-        <div id="print-bill" class="card" style="border:none;">
-            <div class="card-header text-center" style="border:none">
-                <strong class="text-center">Tax Invoice</strong>
-                <span class="pull-right">(ORIGINAL FOR RECIPIENT)</span>
-            </div>
-            <div class="card-body pt-0">
-                <div class="row">
-                    <div class="col-sm-4 border-right border-top border-left border-bottom A4pb">
-                        <table style="width:100%" class="table-borderless">
-                            <tr>
-                                <th colspan=2>@Model.BusinessName</th>
-                            </tr>
-                            <tr>
-                                <th colspan=2>@Model.Address</th>
-                            </tr>
-                            <tr>
-                                <th>GSTIN/UIN:</th>
-                                <td>@Model.GSTIN</td>
-                            </tr>
-                            <tr>
-                                <th>State Name:</th>
-                                <td>@Model.State  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="font-weight:bolder">Code:</span> @Model.StateCode</td>
-                            </tr>
-                            <tr>
-                                <th>Email:</th>
-                                <td>@Model.Email</td>
-                            </tr>
-                            <tr>
-                                <th>Phone:</th>
-                                <td>@Model.MobileNumber</td>
-                            </tr>
-                        </table>
-                    </div>
-                    <div class="col-sm-4 border-right border-top border-bottom">
-                        <table style="width: 100%" class="table-borderless">
-                            <tr>
-                                <td colspan=2>Buyer</td>
-                            </tr>
-                            <tr>
-                                <th colspan=2>{{CustomerName}}</th>
-                            </tr>
-                            <tr>
-                                <th colspan=2>{{CustomerAddress}}</th>
-                            </tr>
-                            <tr>
-                                <th>GSTIN/UIN:</th>
-                                <td>{{CustomerGSTIN}}</td>
-                            </tr>
-                            <tr v-if="stateObj.id > 0">
-                                <th>State Name:</th>
-                                <td>{{stateObj.name}} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="font-weight:bolder">Code:</span>{{stateObj.id}}</td>
-                            </tr>
-                            <tr>
-                                <th>Phone:</th>
-                                <td>{{CustomerMobileNumber}}</td>
-                            </tr>
-                        </table>
-                    </div>
-                    <div class="col-sm-4 border-bottom border-right border-top">
-                        <table style="width:100%" class="table-borderless">
-                            <tr>
-                                <th>Date:</th>
-                                <td>{{Date}}</td>
-                            </tr>
-                            <tr>
-                                <th>Invoice:</th>
-                                <td>{{Invoice}}</td>
-                            </tr>
-                            <tr>
-                                <th>Dispatched Vehicle No.</th>
-                                <td>
-                                    {{DispatchVehicleNumber}}
-                                </td>
-                            </tr>
-                            <tr>
-                                <th>Dispatched Reference(s):</th>
-                                <td>
-                                    {{DispatchReferenceName}}
-                                </td>
-                            </tr>
-                        </table>
-
-                    </div>
-                    <div class="col-md-12 pr-0 pl-0">
-                        <div class="table-responsive-sm">
-                            <table style="width:100%" class="table-borderless">
-                                <tr style="height:27px;">
-                                    <th class="border-right border-bottom border-left text-center A4w45">#</th>
-                                    <th class="border-right border-bottom text-center A4w400">Description of Goods</th>
-                                    <th class="border-right border-bottom text-center">HSN/SAC</th>
-                                    <th class="border-right border-bottom text-center">GST Rate</th>
-                                    <th class="border-right border-bottom text-center">Quantity</th>
-                                    <th class="border-right border-bottom text-center">Rate</th>
-                                    <th class="border-right border-bottom text-center">per</th>
-                                    <th class="border-right border-bottom text-center">Disc %</th>
-                                    <th class="border-bottom text-center border-right">Amount</th>
-                                </tr>
-                                <tr v-for="(item,index) in items" v-if="item.Name" style="height:27px;">
-                                    <td class="text-center border-left border-right A4w45">{{index+1}}</td>
-                                    <td class="left strong border-right A4w400" style="padding-left:10px !important;">{{item.Name}}</td>
-                                    <td class="border-right text-center">{{item.HSN}}</td>
-                                    <td class="text-center border-right">{{displayFormat(item.GST, true)}}</td>
-                                    <td class="border-right text-center">{{item.Quantity}} {{item.MeasuringUnit}}</td>
-                                    <td class="border-right text-center">{{displayFormat(item.Price)}}</td>
-                                    <td class="border-right text-center">{{item.MeasuringUnit}}</td>
-                                    <td class="border-right text-center">{{displayFormat(item.Discount, true)}}</td>
-                                    <td class="text-right text-center border-right">{{displayFormat(item.SubTotal)}}</td>
-                                </tr>
-                                <tr style="height:27px;">
-                                    <td class="border-right border-left"></td>
-                                    <td class="border-right"></td>
-                                    <td class="border-right"></td>
-                                    <td class="border-right"></td>
-                                    <td class="border-right"></td>
-                                    <td class="border-right"></td>
-                                    <td class="border-right"></td>
-                                    <td class="border-right"></td>
-                                    <td class="text-center border-right border-top"><strong>{{displayFormat(subTotal)}}</strong></td>
-                                </tr>
-                                <template v-for="(value, propertyName) in taxSlot">
-                                    <tr style="height:27px;">
-                                        <td class="center border-left border-right"></td>
-                                        <td class="text-center border-right">
-                                            <strong>Output &nbsp; SGST@@{{propertyName}}%</strong>
-                                        </td>
-                                        <td class="border-right"></td>
-                                        <td class="border-right"></td>
-                                        <td class="border-right"></td>
-                                        <td class="border-right"></td>
-                                        <td class="border-right"></td>
-                                        <td class="border-right"></td>
-                                        <td class="text-center border-right">{{displayFormat(value)}}</td>
-                                    </tr>
-                                    <tr style="height:27px;">
-                                        <td class="center border-left border-right"></td>
-                                        <td class="text-center border-right">
-                                            <strong>Output &nbsp; CGST@@{{propertyName}}%</strong>
-                                        </td>
-                                        <td class="border-right"></td>
-                                        <td class="border-right"></td>
-                                        <td class="border-right"></td>
-                                        <td class="border-right"></td>
-                                        <td class="border-right"></td>
-                                        <td class="border-right"></td>
-                                        <td class="text-center border-right">{{displayFormat(value)}}</td>
-                                    </tr>
-                                </template>
-                                <tr style="height:27px;">
-                                    <td class="center border-left border-right"></td>
-                                    <td class="text-center border-right">
-                                        <strong>Round Off</strong>
-                                    </td>
-                                    <td class="border-right"></td>
-                                    <td class="border-right"></td>
-                                    <td class="border-right"></td>
-                                    <td class="border-right"></td>
-                                    <td class="border-right"></td>
-                                    <td class="border-right"></td>
-                                    <td class="text-center border-right">{{displayFormat(RoundOff)}}</td>
-                                </tr>
-                                <tr v-for="(data) in emptyProductCount" style="height:27px;">
-                                    <td class="text-center border-left border-right A4w45"></td>
-                                    <td class="left strong border-right A4w400" style="padding-left:10px !important;"></td>
-                                    <td class="border-right text-center"></td>
-                                    <td class="text-center border-right"></td>
-                                    <td class="border-right text-center"></td>
-                                    <td class="border-right text-center"></td>
-                                    <td class="border-right text-center"></td>
-                                    <td class="border-right text-center"></td>
-                                    <td class="text-right text-center border-right"></td>
-                                </tr>
-                                <tr style="height:27px;">
-                                    <td class="center border-left border-right border-top border-bottom"></td>
-                                    <td class="text-center border-right border-top border-bottom">
-                                        <strong>Total</strong>
-                                    </td>
-                                    <td class="border-right border-top border-bottom"></td>
-                                    <td class="border-right border-top border-bottom"></td>
-                                    <td class="text-center border-right border-top border-bottom">
-                                        <strong>
-                                            {{TotalQuantity}}
-                                        </strong>
-                                    </td>
-                                    <td class="border-right border-top border-bottom"></td>
-                                    <td class="border-right border-top border-bottom"></td>
-                                    <td class="border-right border-top border-bottom"></td>
-                                    <td class="text-center border-top border-bottom border-right">
-                                        <strong>
-                                            <i class="fa fa-inr"></i>
-                                            {{displayFormat(total)}}
-                                        </strong>
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
-                    </div>
-                    <div class="col-md-12 pt-2 pb-2 border-left border-bottom border-right border-bottom">
-                        <span>
-                            Amount (in words) &nbsp;
-                            <strong>
-                                <i class="fa fa-inr"></i>
-                                {{TotalInWords}} Only
-                            </strong>
-                        </span>
-                    </div>
-                    <div class="col-md-6 col-sm-6 border-left border-bottom">
-                        <div><strong>Declaration</strong></div>
-                        <div>
-                            We declare that this Invoice shows the actual price of the goods
-                            described and that all particulars are true and correct
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-sm-6 border-right border-bottom">
-                        <div><strong class="pull-right">for @Model.BusinessName</strong></div>
-                        <div style="padding-top: 35px;">
-                            <span class="pull-right">
-                                Authorised Signatory
-                            </span>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6 offset-4">
-                    This is a Computer Generated Invoice.
-                </div>
-            </div>
-        </div>
-
-    </div>
-</div>
-<script src="~/Scripts/NumberToWords.js"></script>
-<script>
+    <script src="~/Scripts/NumberToWords.js"></script>
+    <script>
     $(document).ready(function () {
 
         var getNewItemRow = function () {
@@ -1158,13 +1245,40 @@
             isComputeTaxOnTotal: true,
             billSettings: {
                 ProductColumn: "",
-                BillColumn: ""
-            }
+                BillColumn: "",
+                IsHSNRequired: true,
+                IsPerRequired: true,
+                IsDiscountRequired: true,
+                IsGstRate: true
+            },
+            billNumberTitle: "Customer & supplier copy",
+            repeatBill: [{ id: 1, title: "(ORIGINAL FOR RECIPIENT)" }, { id: 3, title: "(TRIPLICATE FOR SUPPLIER)" }]
         }
         new Vue({
             el: '#app',
             data: obj,
             methods: {
+                printCopies(value) {
+                    this.repeatBill = [];
+                    if (value === 1) {
+                        this.billNumberTitle = "Customer copy";
+                        this.repeatBill.push({ id: 1, title: "(ORIGINAL FOR RECIPIENT)" });
+                    }
+                    else if (value == 2) {
+                        this.billNumberTitle = "Customer & supplier copy";
+                        this.repeatBill.push({ id: 1, title: "(ORIGINAL FOR RECIPIENT)" });
+                        this.repeatBill.push({ id: 3, title: "(TRIPLICATE FOR SUPPLIER)" });
+                    }
+                    else if (value === 3) {
+                        this.billNumberTitle = "Customer,transporter & supplier copy";
+                        this.repeatBill.push({ id: 1, title: "(ORIGINAL FOR RECIPIENT)" });
+                        this.repeatBill.push({ id: 2, title: "(DUPLICATE FOR TRANSPORTER)" });
+                        this.repeatBill.push({ id: 3, title: "(TRIPLICATE FOR SUPPLIER)" });
+                    }
+                },
+                printBillColumnSettings: function (name, value) {
+                    this.billSettings[name] = value;
+                },
                 saveNewCustomerData: function () {
                     var self = this;
                     var isValid = validation[0].isFormDataValid("add-new-cusotmer-modal") === 0;
@@ -1404,8 +1518,8 @@
                         }
                     } else {
                         // 40 rows = 28px * 40 = 1100px;
-                        if (totalRows < 35) {
-                            for (var i = 0; i < 35 - totalRows; i++) {
+                        if (totalRows < 33) {
+                            for (var i = 0; i < 33 - totalRows; i++) {
                                 self.emptyProductCount.push(1);
                             }
                         }
@@ -1635,6 +1749,6 @@
             }
         });
     });
-</script>
-<script src="~/Scripts/customValidation.js"></script>
+    </script>
+    <script src="~/Scripts/customValidation.js"></script>
 
