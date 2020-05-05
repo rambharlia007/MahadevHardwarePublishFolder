@@ -170,7 +170,7 @@
                 padding-bottom: 0px !important;
                 padding-right: 5px !important;
                 padding-left: 5px !important;
-                font-weight: bolder !important;
+                font-weight: bold !important;
             }
     }
 
@@ -186,22 +186,29 @@
         font-weight: bold !important;
     }
 
+    .gst-width{
+        width:60px !important;
+    }
+
     #print-bill td, #print-bill-a5 td {
         padding-bottom: 0px !important;
         padding-right: 5px !important;
         padding-left: 5px !important;
-        font-weight: bold !important;
+        font-weight: 600 !important;
     }
 
     #print-bill th, #print-bill-a5 th {
         padding-bottom: 0px !important;
         padding-right: 5px !important;
         padding-left: 5px !important;
-        font-weight: bolder !important;
+        font-weight: 700 !important;
     }
-
+    #print-bill strong, #print-bill-a5 strong
+    {
+        font-weight:700 !important;
+    }
     #print-bill .card-header, #print-bill-a5 .card-header {
-        color:black !important
+        color: black !important
     }
 
     @@page {
@@ -681,9 +688,9 @@
     <div v-for="printData in repeatBill" v-show="isPreview && isA5">
         <div style="border:none; margin-left:15px !important; margin-right:5px !important; page-break-after: always;">
             <div id="print-bill-a5" class="card" style="border:none;">
-                <div class="card-header text-center" style="border:none">
+                <div class="card-header" style="border:none">
                     <strong class="text-center" style="font-size:x-large">Tax Invoice</strong>
-                    <span class="pull-right">{{printData.title}}</span>
+                    <span class="pull-right" style="padding-top:7px !important"> <strong style="font-size:large">{{printData.title}}</strong></span>
                 </div>
                 <div class="card-body pt-0">
                     <div class="row">
@@ -692,10 +699,10 @@
                                 <div class="col-sm-12">
                                     <table style="width:100%" class="table-borderless">
                                         <tr>
-                                            <th colspan=2>@Model.BusinessName</th>
+                                            <th colspan=2 style="font-size:large"><strong>@Model.BusinessName</strong></th>
                                         </tr>
                                         <tr>
-                                            <th colspan=2>@Model.Address</th>
+                                            <td colspan=2>@Model.Address</td>
                                         </tr>
                                         <tr>
                                             <th style="width:150px !important">GSTIN/UIN:</th>
@@ -747,15 +754,15 @@
                         <div class="col-sm-5 border-bottom border-right border-top table-responsive-sm">
                             <table style="width:100%" class="table-borderless">
                                 <tr>
-                                    <th style="width:150px !important">Invoice No. :</th>
+                                    <th style="width:150px !important">Invoice No :</th>
                                     <td>{{Invoice}}</td>
                                 </tr>
                                 <tr>
-                                    <th style="width:150px !important">Date:</th>
+                                    <th style="width:150px !important">Date :</th>
                                     <td>{{Date}}</td>
                                 </tr>
                                 <tr>
-                                    <th>Dispatched Vehicle No.</th>
+                                    <th>Vehicle No :</th>
                                     <td>
                                         {{DispatchVehicleNumber}}
                                     </td>
@@ -773,10 +780,10 @@
                             <div class="table-responsive-sm">
                                 <table style="width:100%" class="table-borderless">
                                     <tr style="height:27px;">
-                                        <th class="border-right border-bottom border-left text-center A4w45">SI No.</th>
+                                        <th class="border-right border-bottom border-left text-center A4w45">NO</th>
                                         <th class="border-right border-bottom text-center A5w400">Description of Goods</th>
                                         <th class="border-right border-bottom text-center" v-if="billSettings.IsHSNRequired">HSN/SAC</th>
-                                        <th class="border-right border-bottom text-center" v-if="billSettings.IsGstRate">GST Rate</th>
+                                        <th class="border-right border-bottom text-center gst-width" v-if="billSettings.IsGstRate">GST Rate</th>
                                         <th class="border-right border-bottom text-center">Quantity</th>
                                         <th class="border-right border-bottom text-center">Rate</th>
                                         <th class="border-right border-bottom text-center" v-if="billSettings.IsPerRequired">per</th>
@@ -787,9 +794,9 @@
                                         <td class="text-center border-left border-right A4w45">{{index+1}}</td>
                                         <td class="left strong border-right A5w400" style="padding-left:10px !important;"><strong>{{item.Name}}</strong></td>
                                         <td class="border-right text-left" v-if="billSettings.IsHSNRequired">{{item.HSN}}</td>
-                                        <td class="text-left border-right" v-if="billSettings.IsGstRate">{{displayFormat(item.GST, true)}}</td>
-                                        <th class="border-right text-center">{{item.Quantity}} {{item.MeasuringUnit}}</th>
-                                        <td class="border-right text-left">{{displayFormat(item.Price)}}</td>
+                                        <td class="text-center border-right" v-if="billSettings.IsGstRate">{{displayFormat(item.GST, true)}}</td>
+                                        <th class="border-right text-right">{{item.Quantity}} {{item.MeasuringUnit}}</th>
+                                        <td class="border-right text-right">{{displayFormat(item.Price)}}</td>
                                         <td class="border-right text-left" v-if="billSettings.IsPerRequired">{{item.MeasuringUnit}}</td>
                                         <td class="border-right text-left" v-if="billSettings.IsDiscountRequired">{{displayFormat(item.Discount, true)}}</td>
                                         <th class="text-right border-right">{{displayFormat(item.SubTotal)}}</th>
@@ -866,7 +873,7 @@
                                         <td class="border-right border-top border-bottom" v-if="billSettings.IsGstRate"></td>
                                         <td class="text-center border-right border-top border-bottom">
                                             <strong>
-                                                {{TotalQuantity}}
+                                                {{TotalQuantity}} NOS
                                             </strong>
                                         </td>
                                         <td class="border-right border-top border-bottom"></td>
