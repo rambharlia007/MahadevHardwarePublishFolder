@@ -686,7 +686,7 @@
 
     @*print A5 page*@
     <div v-for="printData in repeatBill" v-show="isPreview && isA5">
-        <div style="border:none; margin-left:15px !important; margin-right:5px !important; page-break-after: always;">
+        <div style="border:none; margin-left:20px !important; margin-right:20px !important; page-break-after: always;">
             <div id="print-bill-a5" class="card" style="border:none;">
                 <div class="card-header" style="border:none">
                     <strong class="text-center" style="font-size:x-large">Tax Invoice</strong>
@@ -699,8 +699,8 @@
                                 <div class="col-sm-12">
                                     <table style="width:100%" class="table-borderless">
                                         <tr>
-                                            <th colspan=2 style="font-size:large"><strong>@Model.BusinessName</strong></th>
-                                        </tr>
+                                            <th colspan=2 style="font-size:1.3em !important"><strong>@Model.BusinessName</strong></th>
+                                        </tr>   
                                         <tr>
                                             <td colspan=2>@Model.Address</td>
                                         </tr>
@@ -780,7 +780,7 @@
                             <div class="table-responsive-sm">
                                 <table style="width:100%" class="table-borderless">
                                     <tr style="height:27px;">
-                                        <th class="border-right border-bottom border-left text-center A4w45">NO</th>
+                                        <th class="border-right border-bottom border-left text-center A4w45">SI NO</th>
                                         <th class="border-right border-bottom text-center A5w400">Description of Goods</th>
                                         <th class="border-right border-bottom text-center" v-if="billSettings.IsHSNRequired">HSN/SAC</th>
                                         <th class="border-right border-bottom text-center gst-width" v-if="billSettings.IsGstRate">GST Rate</th>
@@ -792,12 +792,12 @@
                                     </tr>
                                     <tr v-for="(item,index) in items" v-if="item.Name" style="height:27px;">
                                         <td class="text-center border-left border-right A4w45">{{index+1}}</td>
-                                        <td class="left strong border-right A5w400" style="padding-left:10px !important;"><strong>{{item.Name}}</strong></td>
+                                        <td class="left strong border-right A5w400" style="padding-left:10px !important; font-size:1.2em !important;"><strong>{{item.Name}}</strong></td>
                                         <td class="border-right text-left" v-if="billSettings.IsHSNRequired">{{item.HSN}}</td>
                                         <td class="text-center border-right" v-if="billSettings.IsGstRate">{{displayFormat(item.GST, true)}}</td>
                                         <th class="border-right text-right">{{item.Quantity}} {{item.MeasuringUnit}}</th>
                                         <td class="border-right text-right">{{displayFormat(item.Price)}}</td>
-                                        <td class="border-right text-left" v-if="billSettings.IsPerRequired">{{item.MeasuringUnit}}</td>
+                                        <td class="border-right text-center" v-if="billSettings.IsPerRequired">{{item.MeasuringUnit}}</td>
                                         <td class="border-right text-left" v-if="billSettings.IsDiscountRequired">{{displayFormat(item.Discount, true)}}</td>
                                         <th class="text-right border-right">{{displayFormat(item.SubTotal)}}</th>
                                     </tr>
@@ -909,7 +909,12 @@
                         </div>
                         <div class="col-md-5 col-sm-5 border-right border-bottom">
                             <div><strong class="pull-right">for @Model.BusinessName</strong></div>
-                            <div style="padding-top: 85px;">
+                            <div>
+                                <br />
+                                <br />
+                                <br />
+                                <br />
+                                <br />
                                 <span class="pull-right">
                                     Authorised Signatory
                                 </span>
@@ -1412,13 +1417,13 @@
                     this.TotalInWords = convertNumberToWords(this.total);
                 },
                 print: function (id) {
+                    var self = this;
                     this.isPreview = true;
                     var conf = confirm("Are you sure you want to Print the bill? If you click OK the bill will be saved");
                     if (conf === true) {
-
-                        this.afterPrint();
+                        window.print();
                         setTimeout(function () {
-                            window.print();
+                            self.afterPrint();
                         }, 1000)
                     }
                 },
@@ -1513,13 +1518,13 @@
 
                     if (self.isA5) {
                         // 40 rows = 28px * 40 = 1100px;
-                        if (totalRows < 23) {
-                            for (var i = 0; i < 23 - totalRows; i++) {
+                        if (totalRows < 20) {
+                            for (var i = 0; i < 20 - totalRows; i++) {
                                 self.emptyProductCount.push(1);
                             }
                         }
                         else {
-                            for (var i = 0; i < totalRows - 23; i++) {
+                            for (var i = 0; i < totalRows - 20; i++) {
                                 self.emptyProductCount.pop();
                             }
                         }

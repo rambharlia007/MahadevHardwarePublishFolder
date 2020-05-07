@@ -113,6 +113,7 @@
             <h4 style="padding-left: 15px;">Purchase</h4>
         </div>
         <div class="col-md-6">
+            @*<button style="margin-top: 25px; margin-left: 10px; float: right;" type="button" class="btn btn-success btn-sm" v-on:click="openModalForAddPurchase()">Add Purchase (Products)</button>*@
             <button style="margin-top: 25px; margin-left: 10px; float: right;" type="button" class="btn btn-success btn-sm" v-on:click="openModalForAddPurchase()">Add Purchase</button>
             <button style="margin-top: 25px; float: right;" type="button" class="btn btn-success btn-sm" v-on:click="downloadReport()">Download Report</button>
         </div>
@@ -306,6 +307,71 @@
             </div>
         </div>
 
+        @*<div class="modal" id="add-purchase-products">
+            <div class="modal-dialog modal-dialog-centered modal-xl">
+                <div class="modal-content">
+
+                    <!-- Modal Header -->
+                    <div class="modal-header">
+                        <h4 class="modal-title">Add Purchase</h4>
+                        <button type="button" class="close" v-on:click="closeModal('#add-purchase-products')">&times;</button>
+                    </div>
+
+                    <!-- Modal body -->
+                    <div class="modal-body" style="padding-top: 0px;">
+                        <table class="table text-secondary" id="add-product-table" style="font-size: 14px; margin-bottom:5px;">
+                            <thead class="thead-light table-head">
+                                <tr class="table-row">
+                                    <th style="width: 45px" scope="col">#</th>
+                                    <th style="width:250px !important" scope="col">Name</th>
+                                    <th scope="col">HSN/SAC</th>
+                                     <th scope="col">PER</th>
+                                    <th scope="col" v-if="isStockCountEnabled">Quantity Available</th>
+                                    <th scope="col">SGST (%)</th>
+                                    <th scope="col">CGST (%)</th>
+                                    <th scope="col">Discount %</th>
+                                    <th scope="col">List Price</th>
+                                    <th scope="col">Buy Price</th>
+                                    <th scope="col">Sell Price</th>
+                                </tr>
+                            </thead>
+                            <tbody class="table-body">
+                                <tr class="table-row" v-for="(item,index) in newItems">
+                                    <td style="width: 45px">{{index+1}}</td>
+                                    <td style="width:250px !important"> <input type="text" cv="required" v-model="item.Name" class="form-control form-control-sm"></td>
+                                    <td> <input type="text" v-model="item.HSN" class="form-control form-control-sm"></td>
+                                    <td>
+                                        <select class="form-control form-control-sm" v-model="item.MeasuringUnit">
+                                            <option value="NOS">NOS</option>
+                                            <option value="Unit">Unit</option>
+                                            <option value="Bag">Bag</option>
+                                            <option value="Box">Box</option>
+                                            <option value="KGS">KGS</option>
+                                        </select>
+                                    </td>
+                                    <td v-if="isStockCountEnabled"> <input type="number" cv="required" v-model="item.Quantity" class="form-control form-control-sm"></td>
+                                    <td> <input type="number" v-model="item.SGST" cv="required" class="form-control form-control-sm"></td>
+                                    <td> <input type="number" v-model="item.CGST" cv="required" v-on:keyup="copyTax(index)" class="form-control form-control-sm"></td>
+                                    <td> <input type="number" step=".01" v-model="item.Discount" v-on:keyup="calculatePerItemDiscount(index)" class="form-control form-control-sm"></td>
+                                    <td> <input type="number" v-model="item.Price" cv="required" v-on:keyup="calculatePerItemDiscount(index)" class="form-control form-control-sm"></td>
+                                    <td> <input type="number" readonly v-model="item.DiscountPrice" class="form-control form-control-sm"></td>
+                                    <td style="position:relative;">
+                                        <input type="number" v-model="item.SellPrice" class="form-control form-control-sm">
+                                        <i class="fa fa-trash show-on-hover" v-on:click="removeNewProduct(index)" style="position:absolute; right:15px; top:15px; cursor:pointer"></i>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <!-- Modal footer -->
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-success btn-sm" v-on:click="saveNewPurchase()">Submit</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>*@
+
         <div class="modal" id="add-purchase">
             <div class="modal-dialog modal-dialog-centered modal-xl">
                 <div class="modal-content">
@@ -421,6 +487,26 @@
             return gstModel;
         }
 
+        function addEmptyNewItems() {
+            var result = [];
+            for (var i = 0; i < 1; i++) {
+                result.push({
+                    Id: "",
+                    Name: "",
+                    Price: "",
+                    CGST: "",
+                    SGST: "",
+                    Discount: "",
+                    Quantity: "",
+                    MeasuringUnit: "NOS",
+                    DiscountPrice: "",
+                    SellPrice: "",
+                    HSN: ""
+                });
+            }
+            return result;
+        }
+
         function addEmptyPurchaseObject() {
             var tempPurchase = [];
             for (var i = 0; i < 1; i++) {
@@ -432,8 +518,9 @@
                     Date: "",
                     Invoice: "",
                     DistributorGSTIN: "",
-                    DistributorName : "",
-                    GSTModelData: getPurchaseGSTModel()
+                    DistributorName: "",
+                    GSTModelData: getPurchaseGSTModel(),
+                    items: addEmptyNewItems()
                 });
             }
             return tempPurchase;
