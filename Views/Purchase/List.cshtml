@@ -843,6 +843,7 @@
                             var index = parseInt($(this).attr('data-id'));
                             var data = e.params.data;
                             self.newPurchases[index].DistributorGSTIN = data.GSTIN;
+                            self.newPurchases[index].DistributorName = data.text;
                         });
                 },
                 initSelect2: function () {

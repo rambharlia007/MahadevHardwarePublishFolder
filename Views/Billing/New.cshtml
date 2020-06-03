@@ -898,7 +898,7 @@
                                 </strong>
                             </span>
                         </div>
-                        <div class="col-md-7 col-sm-7 border-left border-bottom">
+                        <div class="col-md-7 col-sm-7 border-left border-bottom" style="font-size:0.65em !important">
                             <div><strong>Declaration</strong></div>
                             <div>
                                 1. We declare that this Invoice shows the actual price of the goods
@@ -910,8 +910,6 @@
                         <div class="col-md-5 col-sm-5 border-right border-bottom">
                             <div><strong class="pull-right">for @Model.BusinessName</strong></div>
                             <div>
-                                <br />
-                                <br />
                                 <br />
                                 <br />
                                 <br />
@@ -1229,7 +1227,7 @@
             alertMessage: "",
             items: items,
             isPreview: false,
-            isA5: false,
+            isA5: true,
             isSelect2Rendered: true,
             stateObj: { id: -1, name: "Select state" },
             CustomerId: 0,
@@ -1252,7 +1250,7 @@
             printPageSettings: "",
             customerType: "isExistingCustomer",
             IsSaveNewCustomer: false,
-            IsA4: true,
+            IsA4: false,
             emptyProductCount: [],
             isComputeTaxOnTotal: true,
             billSettings: {
@@ -1264,7 +1262,7 @@
                 IsGstRate: true
             },
             billNumberTitle: "Customer & supplier copy",
-            repeatBill: [{ id: 1, title: "(ORIGINAL FOR RECIPIENT)" }, { id: 3, title: "(TRIPLICATE FOR SUPPLIER)" }]
+            repeatBill: [{ id: 1, title: "(ORIGINAL FOR RECIPIENT)" }, { id: 3, title: "(DUPLICATE FOR SUPPLIER)" }]
         }
         new Vue({
             el: '#app',
@@ -1279,7 +1277,7 @@
                     else if (value == 2) {
                         this.billNumberTitle = "Customer & supplier copy";
                         this.repeatBill.push({ id: 1, title: "(ORIGINAL FOR RECIPIENT)" });
-                        this.repeatBill.push({ id: 3, title: "(TRIPLICATE FOR SUPPLIER)" });
+                        this.repeatBill.push({ id: 3, title: "(DUPLICATE FOR SUPPLIER)" });
                     }
                     else if (value === 3) {
                         this.billNumberTitle = "Customer,transporter & supplier copy";
@@ -1518,8 +1516,8 @@
 
                     if (self.isA5) {
                         // 40 rows = 28px * 40 = 1100px;
-                        if (totalRows < 18) {
-                            for (var i = 0; i < 18 - totalRows; i++) {
+                        if (totalRows < 23) {
+                            for (var i = 0; i < 23 - totalRows; i++) {
                                 self.emptyProductCount.push(1);
                             }
                         }
