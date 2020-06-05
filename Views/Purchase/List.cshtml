@@ -89,7 +89,7 @@
     @@media only screen and (min-width: 768px) {
         .table-body {
             display: block;
-            max-height: 200px;
+            max-height: 500px;
             overflow-y: scroll;
         }
     }
@@ -97,7 +97,7 @@
     @@media only screen and (min-width: 992px) {
         .table-body {
             display: block;
-            max-height: 200px;
+            max-height: 500px;
             overflow-y: scroll;
         }
     }
@@ -164,6 +164,7 @@
                                 <th>Distributor GSTIN</th>
                                 <th>SGST Amount</th>
                                 <th>CGST Amount</th>
+                                <th>Round off</th>
                                 <th>Sub Amount</th>
                                 <th>Total Amount</th>
                                 <th>Delete</th>
@@ -449,6 +450,7 @@
                                                 <th class="text-center" style="width: 160px;">Dist. GSTIN</th>
                                                 <th class="text-center">SGST Amount</th>
                                                 <th class="text-center">CGST Amount</th>
+                                                <th class="text-center">Roundoff</th>
                                                 <th class="text-center">Sub Amount</th>
                                                 <th class="text-center">Total Amount</th>
                                             </tr>
@@ -462,6 +464,7 @@
                                                 <td style="width: 160px;"> <input type="text" cv="gstin" v-model="purchase.DistributorGSTIN" class="form-control form-control-sm"></td>
                                                 <td> <input type="number" readonly v-model="purchase.TotalCGSTAmount" class="form-control form-control-sm"></td>
                                                 <td> <input type="number" readonly v-model="purchase.TotalSGSTAmount" class="form-control form-control-sm"></td>
+                                                <td> <input type="number" v-model="purchase.Roundoff" v-on:keyup="calculateTotalAmount(index)" class="form-control form-control-sm"></td>
                                                 <td> <input type="number" cv="required" v-model="purchase.SubAmount" v-on:keyup="calculateTotalAmount(index)" class="form-control form-control-sm"></td>
                                                 <td> <input type="number" readonly v-model="purchase.TotalAmount" class="form-control form-control-sm"></td>
                                             </tr>
@@ -776,7 +779,10 @@
                 commonTotalAmountCalculation: function (currentPurchaseData) {
                     var self = this;
                     var getValidateNumber = self.getValidateNumber;
-                    currentPurchaseData.TotalAmount = Math.round((getValidateNumber(currentPurchaseData.TotalSGSTAmount) + getValidateNumber(currentPurchaseData.TotalCGSTAmount) + getValidateNumber(currentPurchaseData.SubAmount))
+                    currentPurchaseData.TotalAmount = Math.round((getValidateNumber(currentPurchaseData.TotalSGSTAmount)
+                        + getValidateNumber(currentPurchaseData.TotalCGSTAmount)
+                        + getValidateNumber(currentPurchaseData.SubAmount)
+                        + getValidateNumber(currentPurchaseData.Roundoff))
                         * 100) / 100;
                 },
                 deleteItem: function(id) {
@@ -1067,6 +1073,12 @@
                             },
                             {
                                 data: "TotalCGSTAmount",
+                                render: function (data, type, row, meta) {
+                                    return Number(data).toLocaleString();
+                                }
+                            },
+                            {
+                                data: "Roundoff",
                                 render: function (data, type, row, meta) {
                                     return Number(data).toLocaleString();
                                 }
