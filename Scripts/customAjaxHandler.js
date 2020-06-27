@@ -31,7 +31,8 @@ function hideLoader() {
     });
 
     $("#navbarColor01 .nav-link").on("click", function (e) {
-        showLoader();
+        if (e.target.id !== "backup-link-li")
+            showLoader();
     });
 
 }());

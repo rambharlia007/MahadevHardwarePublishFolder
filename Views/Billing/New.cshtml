@@ -708,8 +708,8 @@
 
             @*print A5 page*@
             <div v-for="printData in repeatBill" v-show="isPreview && isA5">
-                <div style="border:none; margin-left:20px !important; margin-right:20px !important; page-break-after: always;">
-                    <div id="print-bill-a5" class="card" style="border:none;">
+                <div style="page-break-after: always;">
+                    <div id="print-bill-a5" class="card" style="border:none; margin-top:20px; margin-left:20px !important; margin-right:20px !important;">
                         <div class="card-header" style="border:none">
                             <strong class="text-center" style="font-size:x-large">Tax Invoice</strong>
                             <span class="pull-right" style="padding-top:7px !important"> <strong style="font-size:large">{{printData.title}}</strong></span>
@@ -951,8 +951,8 @@
 
             @*print A4 page*@
             <div v-for="printData in repeatBill" v-show="isPreview && !isA5">
-                <div style="border:none; margin-left:10px !important; margin-right:10px !important; margin-top:10px !important; page-break-after: always;">
-                    <div id="print-bill" class="card" style="border:none;">
+                <div style="page-break-after: always;">
+                    <div id="print-bill" class="card" style="border:none; margin-left:10px !important; margin-right:10px !important; margin-top:10px !important;">
                         <div class="card-header text-center" style="border:none">
                             <strong class="text-center">Tax Invoice</strong>
                             <span class="pull-right">{{printData.title}}</span>

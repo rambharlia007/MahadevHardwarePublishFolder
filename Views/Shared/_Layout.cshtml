@@ -180,27 +180,6 @@
             padding-left: 10px !important
         }
 
-        ::-webkit-scrollbar {
-            width: 5px;
-        }
-
-        ::-webkit-scrollbar-track {
-            -webkit-box-shadow: inset 0 0 6px #6c757d;
-            -webkit-border-radius: 10px;
-            border-radius: 10px;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            -webkit-border-radius: 10px;
-            border-radius: 10px;
-            background: #eee;
-            -webkit-box-shadow: inset 0 0 6px #6c757d;
-        }
-
-            ::-webkit-scrollbar-thumb:window-inactive {
-                background: #6c757d;
-            }
-
         .custom-alert {
             color: red;
             font-size:0.8em;
@@ -268,6 +247,9 @@
                 <li class="nav-item">
                     <a class="nav-link nav-link-dashboard" href=@Url.Action("New", "Dashboard")>Report</a>
                 </li>
+                <li class="nav-item" style="cursor:pointer;">
+                    <a class="nav-link" id="backup-link-li">Backup</a>
+                </li>
             </ul>
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item">
@@ -290,15 +272,65 @@
     <div class="global-spinner fa-5x" style="color:#043346 !important">
         <i class="fa fa-spinner fa-spin fa-pulse"></i>
     </div>
+
     <div class="body-content body-container">
 
         @RenderBody()
         @Scripts.Render("~/bundles/validation")
-        <script src="~/Scripts/customAjaxHandler.js"></script> 
+        <script src="~/Scripts/customAjaxHandler.js"></script>
         <hr class="d-print-none" />
         <footer class="d-print-none footer-container">
             <p>&copy; @DateTime.Now.Year - Product by Ram Bharlia</p>
         </footer>
     </div>
+
+    <div class="modal fade" id="backup-modal-data" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="backup-modal-data">Backup data</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div id="savetodrive-div"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success btn-sm" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://apis.google.com/js/platform.js"></script>
+    <script>
+        $(document).ready(function () {
+
+            $("#backup-link-li").on("click", function () {
+
+                $("#backup-modal-data").modal("show");
+
+                try {
+                    var d = new Date();
+                    var currentDate = d.getDate() + "-" + parseInt(d.getMonth() + 1) + "-" + d.getFullYear();
+                    var fileName = "GstBillingBackupData-" + currentDate + ".zip";
+                    $.get("/profile/backup?fileName=" + fileName, function (response) {
+                        if (response && response.Message === "Success") {
+                            gapi.savetodrive.render('savetodrive-div', {
+                                src: '/Backup/' + fileName,
+                                filename: fileName,
+                                sitename: 'GST Billing app'
+                            });
+                        }
+                    });
+                }
+                catch (err) {
+
+                }
+                
+            });
+        });
+    </script>
 </body>
 </html>
