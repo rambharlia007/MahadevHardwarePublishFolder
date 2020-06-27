@@ -315,10 +315,11 @@
                     var d = new Date();
                     var currentDate = d.getDate() + "-" + parseInt(d.getMonth() + 1) + "-" + d.getFullYear();
                     var fileName = "GstBillingBackupData-" + currentDate + ".zip";
+                    var src = window.location.origin + "/Backup/" + fileName
                     $.get("/profile/backup?fileName=" + fileName, function (response) {
                         if (response && response.Message === "Success") {
                             gapi.savetodrive.render('savetodrive-div', {
-                                src: '/Backup/' + fileName,
+                                src: src,
                                 filename: fileName,
                                 sitename: 'GST Billing app'
                             });
