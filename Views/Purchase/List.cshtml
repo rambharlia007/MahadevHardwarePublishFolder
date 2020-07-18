@@ -713,6 +713,8 @@
                                     var curr = $(ele[self.indexForDistributorAdd]);
                                     curr.append(option).trigger('change');
                                     curr.val(optionId).trigger('change');
+                                    self.newPurchases[self.indexForDistributorAdd].DistributorGSTIN = self.distributor.GSTIN;
+                                    self.newPurchases[self.indexForDistributorAdd].DistributorName = self.distributor.Name;
                                     alert("Distributor added successfully.")
                                 }
                             }

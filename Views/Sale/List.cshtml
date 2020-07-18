@@ -307,11 +307,17 @@
                     });
                     $(".print-bill").click(function (e) {
                         var id = $(this).attr("data-id");
-                        window.location.href = `/Billing/New/${id}?pid=${id}`;
+                        window.open(
+                            `/Billing/New/${id}?pid=${id}`,
+                            '_blank'
+                        );
                     });
                     $(".bill-credit-detail").click(function (e) {
                         var id = $(this).attr("data-customerId");
-                        window.location.href = `/Sale/RecordPayment?cid=${id}`;
+                        window.open(
+                            `/Sale/RecordPayment?cid=${id}`,
+                            '_blank'
+                        );
                     });
 
                     getGridSummary(self.fromDate, self.toDate, "Sales","sale-table");
