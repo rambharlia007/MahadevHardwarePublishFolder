@@ -464,7 +464,7 @@
                                                 <td style="width: 160px;"> <input type="text" cv="gstin" v-model="purchase.DistributorGSTIN" class="form-control form-control-sm"></td>
                                                 <td> <input type="number" readonly v-model="purchase.TotalCGSTAmount" class="form-control form-control-sm"></td>
                                                 <td> <input type="number" readonly v-model="purchase.TotalSGSTAmount" class="form-control form-control-sm"></td>
-                                                <td> <input type="number" v-model="purchase.Roundoff" v-on:keyup="calculateTotalAmount(index)" class="form-control form-control-sm"></td>
+                                                <td> <input v-model="purchase.Roundoff" v-on:keyup="calculateTotalAmount(index)" class="form-control form-control-sm"></td>
                                                 <td> <input type="number" cv="required" v-model="purchase.SubAmount" v-on:keyup="calculateTotalAmount(index)" class="form-control form-control-sm"></td>
                                                 <td> <input type="number" readonly v-model="purchase.TotalAmount" class="form-control form-control-sm"></td>
                                             </tr>
@@ -730,7 +730,7 @@
                         $(".table-body").scrollTop(height)
                         validation[0].register();
                         self.bindAddPurchaseDateComponent();
-                        self.initSelect2();
+                        self.initDistributorSelect2(".dist-select-2");
                         validation[0].collapse();
                     }, 0)
                 },
